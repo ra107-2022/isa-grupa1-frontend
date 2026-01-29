@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from '../material/material/material.module';
+import { RegistrationComponent } from './registration/registration.component';
 
 
 
 @NgModule({
   declarations: [
-    LoginComponent
+    LoginComponent,
+    RegistrationComponent
   ],
   imports: [
     CommonModule,
