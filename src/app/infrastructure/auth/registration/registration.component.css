@@ -1,0 +1,17 @@
+form {
+    margin-top:20px;
+    display: flex;
+    justify-content: center;
+}
+
+div {
+    width: 400px;
+    display:flex;
+    flex-direction: column;
+}
+
+.error-message {
+  color: #f44336;
+  font-size: 0.85em;
+  margin-top: -15px;
+}

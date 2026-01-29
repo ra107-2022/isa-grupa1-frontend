@@ -1,0 +1,23 @@
+<mat-toolbar color="primary" class="topbar">
+  <mat-toolbar-row class="topbar-row">
+    <a class="brand" routerLink="/home">
+      <img src="assets/jutjubic.png" alt="Logo" class="brand-logo">
+      Jutjubic
+    </a>
+    <span class="spacer"></span>
+    <ng-container *ngIf="!isLoggedIn">
+        <button mat-raised-button class="auth-btn" routerLink="/login">
+        <mat-icon>login</mat-icon>
+        <span>Login</span>
+        </button>
+    </ng-container>
+
+    <ng-container *ngIf="isLoggedIn">
+        <button mat-raised-button (click)="onLogout()" class="auth-btn logout-btn">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+    </ng-container>
+
+    </mat-toolbar-row>
+</mat-toolbar>

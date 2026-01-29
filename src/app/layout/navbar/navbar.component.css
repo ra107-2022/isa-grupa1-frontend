@@ -1,0 +1,149 @@
+/* Brand/logo stil */
+.brand {
+  font-size: 2rem;
+  font-weight: 300;
+  font-style: bold;
+  color: white;
+  text-decoration: none;
+  margin-right: 2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.05rem;
+}
+
+.brand-logo {
+  height: 20%;
+  width: 20%;
+  object-fit: contain;
+}
+
+/* 1. Toolbar Base - Modern YT is flat with a subtle border */
+.mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: var(--color-bg-main) !important;
+  color: var(--color-text-main) !important;
+  border-bottom: 1px solid var(--color-border-soft);
+  height: 56px; /* YT standard height */
+  box-shadow: none; /* YouTube doesn't use shadows on the header anymore */
+}
+
+.topbar-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 16px;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+/* 2. Right Side Actions */
+.right-side-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* YT uses tighter spacing */
+  margin-left: auto;
+}
+
+/* 3. Auth Buttons - The "Pill" Look */
+.auth-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+  border-radius: 18px !important; /* The signature YT pill shape */
+  text-transform: none;
+  letter-spacing: 0.2px;
+  transition: background-color 0.2s ease;
+  height: 36px;
+  padding: 0 15px !important;
+}
+
+/* "Sign In" style - YouTube uses a blue outlined button for login */
+.login-btn {
+  color: var(--color-accent) !important;
+  border: 1px solid var(--color-border-soft) !important;
+  background-color: transparent !important;
+}
+
+.login-btn:hover {
+  background-color: rgba(62, 166, 255, 0.1) !important; /* Subtle blue tint */
+  border-color: transparent !important;
+}
+
+/* "Register" style - Mimicking the "Subscribe" button (White in Dark Mode) */
+.register-btn {
+  background-color: var(--color-text-main) !important; 
+  color: var(--color-bg-main) !important;
+  font-weight: 600;
+}
+
+.register-btn:hover {
+  background-color: #d9d9d9 !important;
+}
+
+/* Logout button - Neutral grey pill */
+.logout-btn {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-main) !important;
+  border: none !important;
+}
+
+.logout-btn:hover {
+  background-color: var(--color-bg-muted) !important;
+}
+
+/* 4. Responsive Adjustments */
+@media (max-width: 768px) {
+  .topbar-row {
+    padding: 0 8px;
+  }
+
+  .right-side-actions {
+    gap: 4px;
+  }
+
+  .auth-btn span {
+    display: none; /* Icon only on mobile */
+  }
+
+  .auth-btn {
+    min-width: 40px;
+    padding: 0 !important;
+    justify-content: center;
+  }
+
+  .brand {
+    font-size: 1.1rem;
+  }
+}
+
+/* 5. Menu Items */
+.mat-menu-panel {
+  background-color: var(--color-bg-secondary) !important;
+  border-radius: var(--radius-lg) !important;
+  border: 1px solid var(--color-border-soft);
+}
+
+.mat-menu-item {
+  color: var(--color-text-main) !important;
+  font-size: 14px;
+}
+
+.mat-menu-item:hover {
+  background-color: var(--color-bg-muted) !important;
+}
+
+.mat-menu-item mat-icon {
+  color: var(--color-text-main);
+  margin-right: 12px;
+}
+
+/* Remove the hover lift animation to keep it feeling like a native app */
+.auth-btn:hover {
+  transform: none;
+}
