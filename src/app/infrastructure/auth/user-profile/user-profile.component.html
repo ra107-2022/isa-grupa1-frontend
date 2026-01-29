@@ -1,0 +1,32 @@
+<!-- Loading -->
+<div class="profile-page" *ngIf="loading">
+  <div class="spinner">Loading profile...</div>
+</div>
+
+<!-- Error -->
+<div class="profile-page error" *ngIf="!loading && errorMessage">
+  <div>{{ errorMessage }}</div>
+</div>
+
+<!-- Profile Content -->
+<div class="profile-page" *ngIf="!loading && userProfile">
+
+  <div class="profile-container">
+    <!-- Avatar i info ispod -->
+    <div class="avatar-section">
+      <div class="avatar">
+        {{ userProfile?.username?.charAt(0)?.toUpperCase() || '?' }}
+      </div>
+      <div class="avatar-info">
+        <h2>{{ userProfile?.name || '-' }} {{ userProfile?.surname || '-' }}</h2>
+        <p class="email">{{ userProfile?.email || '-' }}</p>
+      </div>
+    </div>
+
+    <!-- Username desno od avatara -->
+    <div class="username-section">
+      <p class="username">@{{ userProfile?.username || 'unknown' }}</p>
+    </div>
+  </div>
+
+</div>
