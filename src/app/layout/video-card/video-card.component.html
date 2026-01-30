@@ -1,0 +1,12 @@
+<div class="video-card">
+  <div class="thumbnail-wrapper">
+    <img [src]="thumbnailUrl" alt="Video thumbnail" class="thumbnail" />
+  </div>
+  <div class="video-info">
+    <div class="title" title="{{ title }}">{{ title }}</div>
+    <div class="meta">
+      <span class="creator">{{ creator }}</span>
+      <span class="views">{{ views | number }} views</span>
+    </div>
+  </div>
+</div>

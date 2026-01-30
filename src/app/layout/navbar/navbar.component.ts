@@ -13,6 +13,7 @@ export class NavbarComponent implements OnInit {
   user: User | undefined;
 
   get isLoggedIn(): boolean {
+    this.authService.checkIfUserExists();
     return this.user !== undefined && this.user.id !== 0;
   }
 

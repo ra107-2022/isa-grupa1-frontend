@@ -45,6 +45,9 @@
         <div class="error-message" *ngIf="registrationForm.get('password')?.hasError('required') && registrationForm.get('password')?.touched">
             Password is required (min 6 characters).
         </div>
+        <div class="error-message" *ngIf="registrationForm.get('password')?.hasError('minlength') && registrationForm.get('password')?.touched">
+            Password must be at least 6 characters long.
+        </div>
         <mat-form-field>
             <mat-label>Repeat Password</mat-label>
             <input matInput formControlName="repeatPassword" type="password"/>

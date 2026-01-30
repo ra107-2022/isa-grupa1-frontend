@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HomeComponent } from './home/home.component';
 import { NavbarComponent } from './navbar/navbar.component';
+import { VideoCardComponent } from './video-card/video-card.component';
 import { MaterialModule } from '../infrastructure/material/material/material.module';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
@@ -16,6 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
   declarations: [
     HomeComponent,
     NavbarComponent,
+    VideoCardComponent
   ],
   imports: [
     CommonModule,
@@ -31,7 +33,8 @@ import { MatSelectModule } from '@angular/material/select';
   ],
   exports: [
     HomeComponent,
-    NavbarComponent
+    NavbarComponent,
+    VideoCardComponent
   ]
 })
 export class LayoutModule { }
