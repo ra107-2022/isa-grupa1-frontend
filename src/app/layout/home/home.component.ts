@@ -95,7 +95,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  sayHello(id: number) {
+  gotoVideo(id: number) {
     this.router.navigate([`/video/${id}`]);
   }
 

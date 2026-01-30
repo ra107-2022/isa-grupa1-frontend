@@ -3,12 +3,17 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AllVideoInfo, VideoService } from '../../services/video-service/video.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
+import { AuthService } from '../../infrastructure/auth/auth.service';
+import { User } from '../../infrastructure/auth/model/user.model';
+
 @Component({
   selector: 'app-video',
   templateUrl: './video.component.html',
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
+  user: User | undefined;
+
   videoId: number = 0;
   video: AllVideoInfo | null = null;
   videoUrl: SafeResourceUrl | null = null;
@@ -26,17 +31,27 @@ export class VideoComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private videoService: VideoService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+    });
+
     this.videoId = parseInt(this.route.snapshot.paramMap.get('id') ?? 'NaN', 10);
 
     if (!this.videoId || Number.isNaN(this.videoId)) {
       this.router.navigate(['/home']);
-    } else {
-      this.loadVideo(this.videoId);
     }
+
+    this.authService.checkIfUserExists();
+    this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
+      next: info => { console.log(info); },
+      error: err => { console.error('Error happened: ', err); }
+    });
+    this.loadVideo(this.videoId);
   }
 
   loadVideo(id: number) {
