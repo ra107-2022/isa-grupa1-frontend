@@ -1,11 +1,26 @@
 import { Injectable } from '@angular/core';
 
 import { HttpClient, HttpEventType } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 export interface UploadProgress {
   progress: number;
   response?: any;
+}
+
+export type AllVideoInfo = {
+    ownerId: number;
+    ownerUsername: string;
+
+    title: string;
+    description: string;
+    tags: string[];
+    publishDate: string;
+
+    viewCount: number;
+    likeCount: number;
+    dislikeCount: number;
 }
 
 @Injectable({
@@ -52,6 +67,17 @@ export class VideoService {
         return { progress: 0 };
       })
     )
+  }
 
+  getAllVideoInfo(id: number): Observable<AllVideoInfo> {
+    return this.http.get<AllVideoInfo>(`${this.apiUrl}/${id}/all_video_info`);
+  }
+
+  getVideoUrl(id: number): string {
+    return `${this.apiUrl}/${id}/video`;
+  }
+
+  getThumbnailUrl(id: number): string {
+    return `${this.apiUrl}/${id}/thumbnail`;
   }
 }

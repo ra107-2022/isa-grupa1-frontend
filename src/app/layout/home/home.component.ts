@@ -1,10 +1,10 @@
-import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { HomeService } from '../home.service';
 import { VideoCard } from '../model/video-card.model';
 import { ActivityService } from '../activity.service';
-import { forkJoin, map, of, switchMap, tap } from 'rxjs';
+import { forkJoin, map, of, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -21,10 +21,6 @@ export class HomeComponent implements OnInit, OnDestroy {
               private activityService: ActivityService
   ) { }
 
-  goToUpload() {
-    this.router.navigate(['/upload']);
-  }
-
   showLocalTrendingVideos() {
     this.activityService.getTrendingVideos(20, 20, 10000, 10).pipe(
       switchMap(videoIds => {
@@ -32,7 +28,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         return of([]);
       }
 
-      const requests = videoIds.map(videoId => 
+      const requests = videoIds.map(videoId =>
         forkJoin({
           info: this.homeService.getVideoInfo(videoId),
           thumbnail: this.homeService.getThumbnail(videoId)
@@ -71,7 +67,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           return of([]);
         }
 
-        const requests = videoIds.map(videoId => 
+        const requests = videoIds.map(videoId =>
           forkJoin({
             info: this.homeService.getVideoInfo(videoId),
             thumbnail: this.homeService.getThumbnail(videoId)
@@ -97,6 +93,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
       error: (err) => console.error('Greška pri učitavanju:', err)
     });
+  }
+
+  sayHello(id: number) {
+    this.router.navigate([`/video/${id}`]);
   }
 
   ngOnDestroy() {

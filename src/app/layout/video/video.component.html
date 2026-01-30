@@ -1,0 +1,85 @@
+<div class="video-player-container">
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading video...</p>
+  </div>
+
+  <div *ngIf="error && !loading" class="error-container">
+    <mat-icon>error</mat-icon>
+    <h2>Oops! Something went wrong</h2>
+    <p>{{ error }}</p>
+    <button class="btn-back" (click)="goBack()">Go Back</button>
+  </div>
+
+  <div *ngIf="video && !loading && !error" class="player-wrapper">
+    <div class="video-section">
+      <video
+        *ngIf="videoUrl"
+        controls
+        controlsList="nodownload"
+        [src]="videoUrl"
+        (error)="onVideoError($event)"
+        (timeupdate)="onTimeUpdate($event)"
+        (play)="onPlayPause($event)"
+        (pause)="onPlayPause($event)"
+        class="video-element"
+      >
+        Your browser does not support the video tag.
+      </video>
+    </div>
+
+    <div class="video-info">
+      <h1 class="video-title">{{ video.title }}</h1>
+
+      <div class="video-meta">
+        <mat-icon>today</mat-icon>
+        {{ formatDate(video.publishDate) }}
+
+        <span style="width: 20px"></span>
+        <mat-icon>visibility</mat-icon>
+        {{ video.viewCount }} views
+      </div>
+
+      <div class="video-actions">
+        <button class="action-btn">
+          <mat-icon>thumb_up</mat-icon>
+          <span>{{ video.likeCount }}</span>
+        </button>
+        <button class="action-btn">
+          <mat-icon>thumb_down</mat-icon>
+          <span>{{ video.dislikeCount }}</span>
+        </button>
+        <button class="action-btn">
+          <mat-icon>save</mat-icon>
+          Save
+        </button>
+        <button class="action-btn">
+          <mat-icon>share</mat-icon>
+          Share
+        </button>
+      </div>
+
+      <div class="video-description">
+        <h3>Description</h3>
+        <p>{{ video.description }}</p>
+      </div>
+
+      <div class="video-tags" *ngIf="video.tags && video.tags.length > 0">
+        <h3>Tags</h3>
+        <div class="tags-list">
+          <span *ngFor="let tag of video.tags" class="tag">#{{ tag }}</span>
+        </div>
+      </div>
+
+      <div class="uploader-info">
+        <div class="uploader-avatar">
+          {{ video.ownerUsername ? video.ownerUsername.charAt(0).toUpperCase() : 'U' }}
+        </div>
+        <div class="uploader-details">
+          <h4>{{ video.ownerUsername || 'Unknown User' }}</h4>
+          <p>Channel Owner</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
