@@ -17,8 +17,9 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
   { path: 'upload', component: VideoUploadComponent, canActivate: [AuthGuard] },
-  { path: 'user/:id', component: UserProfileComponent },
+  { path: 'users/:id', component: UserProfileComponent },
   { path: 'video/:id', component: VideoComponent },
+  { path: 'users/me', component: UserProfileComponent },
 
   //{ path: 'profile/me', component: UserProfileComponent, canActivate: [AuthGuard] }, // Moj profil
 

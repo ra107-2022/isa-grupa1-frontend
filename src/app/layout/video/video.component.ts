@@ -42,16 +42,20 @@ export class VideoComponent implements OnInit {
 
     if (!this.videoId || Number.isNaN(this.videoId)) {
       this.router.navigate(['/home']);
-    } else {
-      this.loadVideo(this.videoId);
-
-      this.authService.user$.subscribe(user => {
-        this.isAuthenticated = !!user && user.id !== 0;
-        this.currentUserId = user?.id ?? 0;
-      });
-
-      this.authService.checkIfUserExists();
+      return;
     }
+
+    this.loadVideo(this.videoId);
+
+    // Make sure currentUserId is updated whenever user$ emits
+    this.authService.user$.subscribe(user => {
+      this.isAuthenticated = !!user && user.id !== 0;
+      this.currentUserId = user?.id ?? 0;
+    });
+    console.log(this.currentUserId);
+    
+    // Initialize the user immediately if token exists
+    this.authService.checkIfUserExists();
   }
 
   loadVideo(id: number) {

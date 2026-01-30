@@ -57,10 +57,12 @@ export class AuthService {
         const jwtHelperService = new JwtHelperService();
         const accessToken = this.tokenStorage.getToken() || "";
         const decodedToken = jwtHelperService.decodeToken(accessToken);
+        console.log('Decoded token:', decodedToken);
         const user: User = {
-            id: +decodedToken.id,
-            email: decodedToken.email,
+            id: +decodedToken.key,
+            email: decodedToken.sub,
         };
+
         this.user$.next(user);
     }
 

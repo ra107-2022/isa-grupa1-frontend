@@ -13,9 +13,11 @@
   <!-- Lista komentara -->
   <div *ngFor="let comment of comments" class="comment">
     <div class="comment-header">
-      <a class="username" [routerLink]="['/user', comment.authorId]">
+        <a class="username" 
+        [routerLink]="currentUserId === comment.authorId ? '/users/me' : ['/users', comment.authorId]">
         {{ comment.authorUsername }}
-      </a>
+        </a>
+
       <span class="date">{{ comment.createdAt | date:'short' }}</span>
 
       <!-- Dugmad za edit/delete ako je autor -->

@@ -26,10 +26,10 @@ export class NavbarComponent implements OnInit {
     this.authService.checkIfUserExists();
     
     this.authService.user$.subscribe(user => {
-      console.log("aaaa");
-    
-      console.log(user);
       this.user = user;
+      console.log("user navbar");
+      console.log(this.user);
+      
     });
   }
 
