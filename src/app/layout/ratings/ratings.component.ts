@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { RatingsService } from '../ratings.service';
+import { ActivityService } from '../activity.service';
+import { ActivityType } from '../model/activity-type.enum';
 
 @Component({
   selector: 'app-video-rating',
@@ -14,7 +16,9 @@ export class RatingsComponent implements OnInit {
   dislikeCount: number = 0;
   userRating: string = 'NONE'; // 1 for like, -1 for dislike, 0 for none
 
-  constructor(private ratingsService: RatingsService) {}
+  constructor(private ratingsService: RatingsService,
+              private activityService: ActivityService
+  ) {}
 
   ngOnInit(): void {
     this.ratingsService.getRatingsCount(this.videoId).subscribe(counts => {
@@ -32,6 +36,7 @@ export class RatingsComponent implements OnInit {
       this.ratingsService.getRatingsCount(this.videoId).subscribe(counts => {
         this.likeCount = counts.likes;
         this.dislikeCount = counts.dislikes;
+        this.activityService.logActivity(this.videoId, userRating.ratingType === 'LIKE' ? ActivityType.LIKE : ActivityType.NONE, 0, 0);
       });
     });
   }
@@ -42,6 +47,7 @@ export class RatingsComponent implements OnInit {
       this.ratingsService.getRatingsCount(this.videoId).subscribe(counts => {
         this.dislikeCount = counts.dislikes;
         this.likeCount = counts.likes;
+        this.activityService.logActivity(this.videoId, userRating.ratingType === 'DISLIKE' ? ActivityType.DISLIKE : ActivityType.NONE, 0, 0);
       });
     });
   }

@@ -3,6 +3,8 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HomeService } from '../home.service';
 import { VideoCard } from '../model/video-card.model';
+import { ActivityService } from '../activity.service';
+import { forkJoin, map, of, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -15,39 +17,94 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(private homeService: HomeService,
               private sanitizer: DomSanitizer,
-              private router: Router
+              private router: Router,
+              private activityService: ActivityService
   ) { }
 
   goToUpload() {
     this.router.navigate(['/upload']);
   }
-  ngOnInit() {
-    this.homeService.getPagedVideos(0, 10).subscribe(videoIds => {
-      videoIds.forEach(videoId => {
-        this.homeService.getVideoInfo(videoId).subscribe(videoInfo => {
-          const videoCard: VideoCard = {
-            id: videoId,
-            title: videoInfo.title,
-            creator: videoInfo.userUsername,
-            views: videoInfo.viewCount,
-          };
-          this.homeService.getThumbnail(videoId).subscribe(blob => {
-            const objectURL = URL.createObjectURL(blob);
-            videoCard.thumbnailSafeUrl = this.sanitizer.bypassSecurityTrustUrl(objectURL);
-          });
 
-          this.videos.push(videoCard);
-        });
-      });
+  showLocalTrendingVideos() {
+    this.activityService.getTrendingVideos(20, 20, 10000, 10).pipe(
+      switchMap(videoIds => {
+      if (!videoIds || videoIds.length === 0) {
+        return of([]);
+      }
+
+      const requests = videoIds.map(videoId => 
+        forkJoin({
+          info: this.homeService.getVideoInfo(videoId),
+          thumbnail: this.homeService.getThumbnail(videoId)
+        }).pipe(
+          map(res => {
+            const objectURL = URL.createObjectURL(res.thumbnail);
+            return {
+              id: videoId,
+              title: res.info.title,
+              creator: res.info.userUsername,
+              views: res.info.viewCount,
+              thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
+            } as VideoCard;
+          })
+        )
+      );
+      // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
+      return forkJoin(requests);
+    })
+  ).subscribe({
+    next: (orderedVideos) => {
+      this.videos = orderedVideos;
+    },
+    error: (err) => console.error('Greška pri učitavanju:', err)
+  });
+  }
+
+  ngOnInit() {
+    this.loadVideos();
+  }
+
+  loadVideos(): void {
+    this.homeService.getPagedVideos(0, 10).pipe(
+      switchMap(videoIds => {
+        if (!videoIds || videoIds.length === 0) {
+          return of([]);
+        }
+
+        const requests = videoIds.map(videoId => 
+          forkJoin({
+            info: this.homeService.getVideoInfo(videoId),
+            thumbnail: this.homeService.getThumbnail(videoId)
+          }).pipe(
+            map(res => {
+              const objectURL = URL.createObjectURL(res.thumbnail);
+              return {
+                id: videoId,
+                title: res.info.title,
+                creator: res.info.userUsername,
+                views: res.info.viewCount,
+                thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
+              } as VideoCard;
+            })
+          )
+        );
+        // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
+        return forkJoin(requests);
+      })
+    ).subscribe({
+      next: (orderedVideos) => {
+        this.videos = orderedVideos;
+      },
+      error: (err) => console.error('Greška pri učitavanju:', err)
     });
   }
 
   ngOnDestroy() {
-  this.videos.forEach(video => {
-    if (video.thumbnailSafeUrl) {
-      const url = (video.thumbnailSafeUrl as any).changingThisBreaksApplicationSecurity;
-      URL.revokeObjectURL(url);
-    }
-  });
+    this.videos.forEach(video => {
+      if (video.thumbnailSafeUrl) {
+        const url = (video.thumbnailSafeUrl as any).changingThisBreaksApplicationSecurity;
+        URL.revokeObjectURL(url);
+      }
+    });
   }
 }
