@@ -31,6 +31,7 @@ export class CommentComponent implements OnChanges {
   totalComments: number = 0;
 
   ngOnChanges(changes: SimpleChanges): void {
+    
     if (changes['videoId']) {
       this.currentPage = 0;
     }
@@ -47,6 +48,8 @@ export class CommentComponent implements OnChanges {
   }
 
   onDeleteComment(commentId: number): void {
+    console.log("curr user");
+    console.log(this.currentUserId);
     this.deleteComment.emit(commentId);
   }
 

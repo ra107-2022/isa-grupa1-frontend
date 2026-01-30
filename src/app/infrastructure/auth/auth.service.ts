@@ -57,10 +57,12 @@ export class AuthService {
         const jwtHelperService = new JwtHelperService();
         const accessToken = this.tokenStorage.getToken() || "";
         const decodedToken = jwtHelperService.decodeToken(accessToken);
+        console.log('Decoded token:', decodedToken);
         const user: User = {
-            id: +decodedToken.id,
-            email: decodedToken.email,
+            id: +decodedToken.key,
+            email: decodedToken.sub,
         };
+
         this.user$.next(user);
     }
 
@@ -71,4 +73,12 @@ export class AuthService {
         }
         this.setUser();
     }
+
+    isLoggedIn(): boolean {
+        const token = this.tokenStorage.getToken();
+        if(!token) { return false; }
+        const jwtHelperService = new JwtHelperService();
+        return !jwtHelperService.isTokenExpired(token);
+    }
+
 }

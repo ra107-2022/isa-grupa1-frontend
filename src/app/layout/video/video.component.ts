@@ -7,6 +7,9 @@ import { AuthService } from '../../infrastructure/auth/auth.service';
 import { User } from '../../infrastructure/auth/model/user.model';
 import { ActivityType } from '../model/activity-type.enum';
 import { ActivityService } from '../activity.service';
+import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
+import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
+
 
 @Component({
   selector: 'app-video',
@@ -29,6 +32,9 @@ export class VideoComponent implements OnInit {
   isMuted: boolean = false;
   isFullscreen: boolean = false;
 
+  isAuthenticated: boolean = false;
+  currentUserId: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
@@ -36,6 +42,7 @@ export class VideoComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private authService: AuthService,
     private activityService: ActivityService
+    
   ) {}
 
   ngOnInit() {
@@ -49,7 +56,13 @@ export class VideoComponent implements OnInit {
       this.router.navigate(['/home']);
     }
 
+
+    this.authService.user$.subscribe(user => {
+        this.isAuthenticated = !!user && user.id !== 0;
+        this.currentUserId = user?.id ?? 0;
+    });
     this.authService.checkIfUserExists();
+
     this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
       next: info => { console.log(info); },
       error: err => { console.error('Error happened: ', err); }
@@ -144,4 +157,5 @@ export class VideoComponent implements OnInit {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   }
+  
 }

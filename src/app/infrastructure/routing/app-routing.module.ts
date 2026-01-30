@@ -16,10 +16,12 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
-  { path: 'upload', component: VideoUploadComponent },
-  { path: 'user/:id', component: UserProfileComponent },
+  { path: 'upload', component: VideoUploadComponent, canActivate: [AuthGuard] },
+  { path: 'users/:id', component: UserProfileComponent },
   { path: 'video/:id', component: VideoComponent },
-  { path: 'profile/:id', component: UserProfileComponent },
+  { path: 'users/me', component: UserProfileComponent },
+
+  //{ path: 'profile/me', component: UserProfileComponent, canActivate: [AuthGuard] }, // Moj profil
 
   // Fallback when no prior route is matched
   { path: '**', redirectTo: 'home' },

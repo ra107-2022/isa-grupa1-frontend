@@ -46,7 +46,8 @@
     </div>
 
     <!-- Actions (Edit/Delete) -->
-    <div class="profile-actions" >
+    <!-- Prikazujemo dugmad samo ako je My Profile -->
+    <div class="profile-actions" *ngIf="isMyProfile === true">
       <button *ngIf="!isEditing" (click)="onEdit()">Edit Profile</button>
       <button *ngIf="isEditing" (click)="onSave()" [disabled]="editForm.invalid">Save</button>
       <button *ngIf="isEditing" (click)="onCancelEdit()">Cancel</button>

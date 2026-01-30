@@ -16,21 +16,17 @@ export class UserProfileComponent implements OnInit {
   loading: boolean = true;
   errorMessage: string = '';
 
-  // Forma za edit
   editForm!: FormGroup;
   isEditing: boolean = false;
+
+  isMyProfile: boolean = false; // Da znamo da li je /me ili javni profil
 
   constructor(
     private route: ActivatedRoute,
     private userProfileService: UserProfileService,
     private fb: FormBuilder,
-    private authService: AuthService // za logout
+    private authService: AuthService
   ) {}
-
-  // Getter za current user ID
-  get currentUserId(): number {
-    return this.authService.currentUser?.id || 0;
-  }
 
   ngOnInit(): void {
     // Inicijalizacija forme
@@ -41,36 +37,39 @@ export class UserProfileComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]]
     });
 
-    this.route.paramMap.subscribe(params => {
-      const idParam = params.get('id');
-      const userId = idParam ? Number(idParam) : null;
+    const pathSegments = this.route.snapshot.url.map(segment => segment.path);
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    
+    console.log('Current path:', pathSegments );
 
+    if (lastSegment === 'me') {
+      // My Profile
+      this.isMyProfile = true;
+      this.fetchMyProfile();
+    } else {
+      // Pretpostavljamo ID u path-u
+      const idParam = this.route.snapshot.paramMap.get('id');
+      const userId = idParam ? Number(idParam) : null;
       if (userId !== null && !isNaN(userId)) {
-        this.fetchUserProfile(userId);
+        this.isMyProfile = false;
+        this.fetchUserProfileById(userId);
       } else {
-        this.errorMessage = 'Invalid user ID';
+        this.errorMessage = 'Invalid profile path';
         this.loading = false;
       }
-    });
+    }
   }
 
-  private fetchUserProfile(userId: number): void {
+
+  // =========================
+  // GET profile po ID-u (javni)
+  // =========================
+  private fetchUserProfileById(userId: number): void {
     this.loading = true;
     this.errorMessage = '';
 
     this.userProfileService.getUserProfile(userId).subscribe({
-      next: profile => {
-        this.userProfile = profile;
-        this.loading = false;
-
-        // Popuni formu sa postojecim podacima
-        this.editForm.patchValue({
-          username: profile.username,
-          name: profile.name,
-          surname: profile.surname,
-          email: profile.email
-        });
-      },
+      next: profile => this.onProfileFetched(profile),
       error: () => {
         this.errorMessage = 'User not found';
         this.loading = false;
@@ -78,8 +77,40 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  // ===== EDIT =====
+  // =========================
+  // GET /me - za ulogovanog korisnika
+  // =========================
+  private fetchMyProfile(): void {
+    this.loading = true;
+    this.errorMessage = '';
+
+    this.userProfileService.getMyProfile().subscribe({
+      next: profile => this.onProfileFetched(profile),
+      error: err => {
+        this.errorMessage = err?.error || 'Failed to load profile';
+        this.loading = false;
+      }
+    });
+  }
+
+  private onProfileFetched(profile: UserProfile): void {
+    this.userProfile = profile;
+    this.loading = false;
+
+    // Popuni formu
+    this.editForm.patchValue({
+      username: profile.username,
+      name: profile.name,
+      surname: profile.surname,
+      email: profile.email
+    });
+  }
+
+  // =========================
+  // EDIT My Profile
+  // =========================
   onEdit(): void {
+    if (!this.isMyProfile) return; // Samo My Profile se moze menjati
     this.isEditing = true;
   }
 
@@ -96,12 +127,11 @@ export class UserProfileComponent implements OnInit {
   }
 
   onSave(): void {
-    if (!this.userProfile) return;
-    if (this.editForm.invalid) return;
+    if (!this.userProfile || this.editForm.invalid || !this.isMyProfile) return;
 
     const updatedData: Partial<UserProfile> = this.editForm.value;
 
-    this.userProfileService.updateUserProfile(this.userProfile.id, updatedData).subscribe({
+    this.userProfileService.updateMyProfile(updatedData).subscribe({
       next: updatedProfile => {
         this.userProfile = updatedProfile;
         this.isEditing = false;
@@ -112,16 +142,17 @@ export class UserProfileComponent implements OnInit {
     });
   }
 
-  // ===== DELETE =====
+  // =========================
+  // DELETE My Profile
+  // =========================
   onDelete(): void {
-    if (!this.userProfile) return;
+    if (!this.userProfile || !this.isMyProfile) return;
 
     if (confirm('Are you sure you want to delete your profile?')) {
-      this.userProfileService.deleteUserProfile(this.userProfile.id).subscribe({
+      this.userProfileService.deleteMyProfile().subscribe({
         next: () => {
           alert('Profile deleted successfully.');
-          // Poziva AuthService da izloguje korisnika i vrati ga na home
-          this.authService.logout();
+          this.authService.logout(); // Logout nakon brisanja
         },
         error: err => {
           this.errorMessage = err?.error || 'Failed to delete profile';

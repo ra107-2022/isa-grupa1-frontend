@@ -5,6 +5,7 @@ import { HomeService } from '../home.service';
 import { VideoCard } from '../model/video-card.model';
 import { ActivityService } from '../activity.service';
 import { forkJoin, map, of, switchMap } from 'rxjs';
+import { AuthService } from 'src/app/infrastructure/auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -18,7 +19,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   constructor(private homeService: HomeService,
               private sanitizer: DomSanitizer,
               private router: Router,
-              private activityService: ActivityService
+              private activityService: ActivityService,
+              private authService: AuthService
   ) { }
 
   showLocalTrendingVideos() {
@@ -107,4 +109,5 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
   }
+
 }
