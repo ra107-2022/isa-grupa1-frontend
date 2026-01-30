@@ -81,7 +81,22 @@
       <small>Separate tags with commas</small>
     </div>
 
-    <div class="form-row">
+    <div *ngIf="automaticGeoloc">
+      <button
+        type="button"
+        (click)="getLocation()"
+        [disabled]="gettingLocation"
+      >
+        {{ gettingLocation ? 'Getting location...' : 'Use My Location' }}
+      </button>
+
+      <div *ngIf="uploadForm.latitude && uploadForm.longitude">
+        <p>Latitude: {{ uploadForm.latitude }}</p>
+        <p>Longitude: {{ uploadForm.longitude }}</p>
+      </div>
+    </div>
+
+    <div class="form-row" *ngIf="!automaticGeoloc">
       <div class="form-group">
         <label for="latitude">Latitude (optional)</label>
         <input
