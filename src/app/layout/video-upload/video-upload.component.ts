@@ -3,6 +3,8 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { VideoService } from '../../services/video-service/video.service';
+import { GeolocService } from '../../services/geoloc-service/geoloc.service';
+
 import { finalize } from 'rxjs/operators';
 
 @Component({
@@ -31,7 +33,13 @@ export class VideoUploadComponent {
     tags: ''
   };
 
-  constructor(private videoService: VideoService) {}
+  automaticGeoloc: boolean = true;
+  gettingLocation: boolean = false;
+
+  constructor(
+    private videoService: VideoService,
+    private geolocService: GeolocService
+  ) {}
 
   onVideoSelect(event: any) {
     const file = event.target.files[0];
@@ -65,6 +73,22 @@ export class VideoUploadComponent {
     }
   }
 
+  getLocation() {
+    this.gettingLocation = true;
+    this.geolocService.getCurrentLocation().subscribe({
+      next: (coords) => {
+        this.uploadForm.latitude = coords.latitude;
+        this.uploadForm.longitude = coords.longitude;
+        this.gettingLocation = false;
+      },
+      error: (err) => {
+        console.error('Geolocation error: ', err);
+        alert(err);
+        this.gettingLocation = false;
+      }
+    });
+  }
+
   uploadVideo() {
     if (!this.videoFile || !this.thumbnailFile) {
       this.uploadError = 'Please select both video [.mp4] and thumbnail [.jpeg] files'
@@ -90,6 +114,7 @@ export class VideoUploadComponent {
       this.uploadError = 'Please enter at least one tag';
       return;
     }
+
 
     this.uploading = true;
     this.uploadProgress = 0;

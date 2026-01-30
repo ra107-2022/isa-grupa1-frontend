@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './infrastructure/routing/app-routing.module';
@@ -24,6 +25,7 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    MatIconModule,
     CommonModule
   ],
   providers: [

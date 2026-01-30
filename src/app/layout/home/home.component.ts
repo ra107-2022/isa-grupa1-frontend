@@ -24,7 +24,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) { }
 
   showLocalTrendingVideos() {
-    this.activityService.getTrendingVideos(20, 20, 10000, 10).pipe(
+    this.activityService.getTrendingVideos(3, 3, 10000, 10).pipe(
       switchMap(videoIds => {
       if (!videoIds || videoIds.length === 0) {
         return of([]);
@@ -97,7 +97,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  sayHello(id: number) {
+  gotoVideo(id: number) {
     this.router.navigate([`/video/${id}`]);
   }
 

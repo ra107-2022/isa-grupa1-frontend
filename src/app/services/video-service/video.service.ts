@@ -4,6 +4,7 @@ import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
+
 export interface UploadProgress {
   progress: number;
   response?: any;
@@ -29,7 +30,10 @@ export type AllVideoInfo = {
 export class VideoService {
   private apiUrl = 'http://localhost:8080/api/videos';
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient
+  ) { }
+
 
   uploadVideo(
     videoFile: File,
@@ -79,5 +83,15 @@ export class VideoService {
 
   getThumbnailUrl(id: number): string {
     return `${this.apiUrl}/${id}/thumbnail`;
+  }
+
+  addView(id: number, isLoggedIn: boolean): Observable<any> {
+    if (isLoggedIn) {
+      console.log("logged in");
+      return this.http.put(`${this.apiUrl}/${id}/view_by_user`, {}, { withCredentials: true })
+    } else {
+      console.log("not logged in");
+      return this.http.put(`${this.apiUrl}/${id}/view`, {}, { withCredentials: false });
+    }
   }
 }

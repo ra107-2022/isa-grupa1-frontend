@@ -41,14 +41,7 @@
       </div>
 
       <div class="video-actions">
-        <button class="action-btn">
-          <mat-icon>thumb_up</mat-icon>
-          <span>{{ video.likeCount }}</span>
-        </button>
-        <button class="action-btn">
-          <mat-icon>thumb_down</mat-icon>
-          <span>{{ video.dislikeCount }}</span>
-        </button>
+        <app-video-rating [videoId]="videoId"></app-video-rating>
         <button class="action-btn">
           <mat-icon>save</mat-icon>
           Save

@@ -2,9 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AllVideoInfo, VideoService } from '../../services/video-service/video.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+import { AuthService } from '../../infrastructure/auth/auth.service';
+import { User } from '../../infrastructure/auth/model/user.model';
+import { ActivityType } from '../model/activity-type.enum';
+import { ActivityService } from '../activity.service';
 import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
 import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
-import { AuthService } from 'src/app/infrastructure/auth/auth.service';
 
 
 @Component({
@@ -13,6 +17,8 @@ import { AuthService } from 'src/app/infrastructure/auth/auth.service';
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
+  user: User | undefined;
+
   videoId: number = 0;
   video: AllVideoInfo | null = null;
   videoUrl: SafeResourceUrl | null = null;
@@ -34,28 +40,31 @@ export class VideoComponent implements OnInit {
     private router: Router,
     private videoService: VideoService,
     private sanitizer: DomSanitizer,
-    private authService: AuthService
+    private authService: AuthService,
+    private activityService: ActivityService
+    
   ) {}
 
   ngOnInit() {
+    this.authService.user$.subscribe(user => {
+      this.user = user;
+    });
+
     this.videoId = parseInt(this.route.snapshot.paramMap.get('id') ?? 'NaN', 10);
 
     if (!this.videoId || Number.isNaN(this.videoId)) {
       this.router.navigate(['/home']);
-      return;
     }
 
-    this.loadVideo(this.videoId);
-
-    // Make sure currentUserId is updated whenever user$ emits
-    this.authService.user$.subscribe(user => {
-      this.isAuthenticated = !!user && user.id !== 0;
-      this.currentUserId = user?.id ?? 0;
-    });
-    console.log(this.currentUserId);
-    
-    // Initialize the user immediately if token exists
     this.authService.checkIfUserExists();
+    this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
+      next: info => { console.log(info); },
+      error: err => { console.error('Error happened: ', err); }
+    });
+
+    this.activityService.logActivity(this.videoId, ActivityType.VIEW, 3, 3);
+
+    this.loadVideo(this.videoId);
   }
 
   loadVideo(id: number) {
