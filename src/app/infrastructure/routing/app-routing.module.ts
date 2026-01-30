@@ -14,7 +14,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
-  { path: 'profile/:id', component: UserProfileComponent },
+  { path: 'user/:id', component: UserProfileComponent },
 
   // Fallback when no prior route is matched
   { path: '**', redirectTo: 'home' },
