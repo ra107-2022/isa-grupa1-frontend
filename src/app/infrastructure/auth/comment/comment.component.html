@@ -1,10 +1,11 @@
-<div class="comment-section card">
+<div class="comment-section">
   <!-- Dodavanje komentara -->
   <div *ngIf="isAuthenticated" class="add-comment">
     <textarea [(ngModel)]="newCommentText" placeholder="Dodaj komentar..."></textarea>
-    <button class="btn-primary" (click)="onAddComment()">Add Comment</button>
+    <button (click)="onAddComment()">Add Comment</button>
   </div>
 
+  <!-- Napomena za login -->
   <div *ngIf="!isAuthenticated" class="login-note">
     You must be logged in to add comments.
   </div>
@@ -12,21 +13,26 @@
   <!-- Lista komentara -->
   <div *ngFor="let comment of comments" class="comment">
     <div class="comment-header">
-      <span class="username">{{ comment.authorUsername }}</span>
+      <!-- Klik na username vodi na profil korisnika -->
+      <a class="username" [routerLink]="['/user', comment.authorId]">
+        {{ comment.authorUsername }}
+      </a>
+
       <span class="date">{{ comment.createdAt | date:'short' }}</span>
 
-      <!-- dugmad za edit/delete samo ako je korisnik autor -->
+      <!-- Dugmad za edit/delete ako je autor -->
       <div class="actions" *ngIf="isAuthenticated && comment.authorId === currentUserId">
-        <button class="btn-secondary" (click)="editTextMap[comment.commentId] = comment.content">Edit</button>
-        <button class="btn-secondary" (click)="onDeleteComment(comment.commentId)">Delete</button>
+        <button (click)="editTextMap[comment.commentId] = comment.content">Edit</button>
+        <button (click)="onDeleteComment(comment.commentId)">Delete</button>
       </div>
     </div>
 
     <!-- Edit polje -->
     <div *ngIf="editTextMap[comment.commentId] !== undefined" class="edit-comment">
       <textarea [(ngModel)]="editTextMap[comment.commentId]"></textarea>
-      <button class="btn-primary" (click)="onEditComment(comment.commentId)">Save</button>
-      <button class="btn-secondary" (click)="editTextMap[comment.commentId] = undefined">Cancel</button>
+      <button (click)="onEditComment(comment.commentId)">Save</button>
+      <button (click)="cancelEdit(comment.commentId)">Cancel</button>
+
     </div>
 
     <!-- Prikaz komentara -->
@@ -35,8 +41,8 @@
 
   <!-- Paginacija -->
   <div class="pagination">
-    <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 0">Previous</button>
-    <span>Page {{ currentPage + 1 }}</span>
-    <button class="btn-secondary" (click)="nextPage()" [disabled]="comments.length < pageSize">Next</button>
+    <button (click)="prevPage()" [disabled]="currentPage === 0">Previous</button>
+    <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Next</button>
   </div>
 </div>

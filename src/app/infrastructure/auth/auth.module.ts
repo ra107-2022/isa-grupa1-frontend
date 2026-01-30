@@ -1,10 +1,12 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './login/login.component';
 import { MaterialModule } from '../material/material/material.module';
 import { RegistrationComponent } from './registration/registration.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
+import { CommentComponent } from './comment/comment.component';
+import { Router, RouterModule } from '@angular/router';
 
 
 
@@ -12,15 +14,19 @@ import { UserProfileComponent } from './user-profile/user-profile.component';
   declarations: [
     LoginComponent,
     RegistrationComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    CommentComponent
   ],
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    FormsModule,
+    RouterModule
   ],
   exports: [
-    LoginComponent
+    LoginComponent,
+    CommentComponent
   ]
 })
 export class AuthModule { }

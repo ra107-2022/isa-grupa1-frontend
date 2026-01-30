@@ -1,90 +1,173 @@
 .comment-section {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
-  background-color: var(--color-bg-card);
-  border-radius: var(--radius-lg);
-  padding: var(--space-lg);
+  gap: 12px;
+  background-color: #1e1e1e;
+  border-radius: 12px;
+  padding: 20px;
+  color: #f1f1f1;
 }
 
+/* Add comment */
 .add-comment {
   display: flex;
   flex-direction: column;
-  gap: var(--space-sm);
-
-  textarea {
-    width: 100%;
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-soft);
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-main);
-    resize: vertical;
-  }
-
-  button {
-    align-self: flex-end;
-  }
+  gap: 8px;
 }
 
+.add-comment textarea {
+  width: 100%;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #3f3f3f;
+  background-color: #272727;
+  color: #f1f1f1;
+  resize: vertical;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+
+.add-comment button {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background-color: #ff0000;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.add-comment button:hover {
+  background-color: #cc0000;
+}
+
+/* Login note */
 .login-note {
-  color: var(--color-text-secondary);
+  color: #aaaaaa;
   font-style: italic;
 }
 
+/* Individual comment */
 .comment {
-  padding: var(--space-sm) 0;
-  border-bottom: 1px solid var(--color-border-soft);
+  padding: 8px 0;
+  border-bottom: 1px solid #3f3f3f;
+}
 
-  .comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-xs);
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
 
-    .username {
-      font-weight: 600;
-      color: var(--color-text-main);
-    }
+.comment-header .username {
+  font-weight: 600;
+  color: #3ea6ff;
+  cursor: pointer;
+  text-decoration: none;
+}
 
-    .date {
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-    }
+.comment-header .username:hover {
+  text-decoration: underline;
+}
 
-    .actions {
-      display: flex;
-      gap: var(--space-xs);
+.comment-header .date {
+  font-size: 12px;
+  color: #aaaaaa;
+}
 
-      button {
-        padding: 2px 6px;
-        font-size: var(--font-size-sm);
-      }
-    }
-  }
+.comment-header .actions {
+  display: flex;
+  gap: 4px;
+}
 
-  .edit-comment {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+.comment-header .actions button {
+  padding: 2px 6px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  background-color: #272727;
+  color: #f1f1f1;
+}
 
-    textarea {
-      width: 100%;
-      padding: var(--space-xs);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--color-border-soft);
-      background-color: var(--color-bg-secondary);
-      color: var(--color-text-main);
-      resize: vertical;
-    }
+.comment-header .actions button:hover {
+  background-color: #3f3f3f;
+}
 
-    button {
-      width: fit-content;
-    }
-  }
+/* Edit comment */
+.edit-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 4px;
+}
 
-  p {
-    margin: 0;
-    color: var(--color-text-main);
-  }
+.edit-comment textarea {
+  width: 100%;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #3f3f3f;
+  background-color: #272727;
+  color: #f1f1f1;
+  resize: vertical;
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+}
+
+.edit-comment button {
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-comment button:first-child {
+  background-color: #ff0000;
+  color: #ffffff;
+}
+
+.edit-comment button:first-child:hover {
+  background-color: #cc0000;
+}
+
+.edit-comment button:last-child {
+  background-color: #272727;
+  color: #f1f1f1;
+}
+
+.edit-comment button:last-child:hover {
+  background-color: #3f3f3f;
+}
+
+/* Comment content */
+.comment p {
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+}
+
+.pagination button {
+  padding: 4px 12px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  background-color: #272727;
+  color: #f1f1f1;
+}
+
+.pagination button:hover {
+  background-color: #3f3f3f;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
