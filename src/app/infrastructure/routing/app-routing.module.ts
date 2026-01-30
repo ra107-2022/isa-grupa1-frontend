@@ -6,6 +6,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { RegistrationComponent } from '../auth/registration/registration.component';
 import { VideoUploadComponent } from '../../layout/video-upload/video-upload.component';
 import { UserProfileComponent } from '../auth/user-profile/user-profile.component';
+import { VideoComponent } from '../../layout/video/video.component';
 
 const routes: Routes = [
   // Default
@@ -17,6 +18,8 @@ const routes: Routes = [
   { path: 'register', component: RegistrationComponent },
   { path: 'upload', component: VideoUploadComponent },
   { path: 'user/:id', component: UserProfileComponent },
+  { path: 'video/:id', component: VideoComponent },
+  { path: 'profile/:id', component: UserProfileComponent },
 
   // Fallback when no prior route is matched
   { path: '**', redirectTo: 'home' },

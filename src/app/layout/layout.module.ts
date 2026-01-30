@@ -13,13 +13,15 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { RatingsComponent } from './ratings/ratings.component';
+import { VideoComponent } from './video/video.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     NavbarComponent,
     VideoCardComponent,
-    RatingsComponent
+    RatingsComponent,
+    VideoComponent
   ],
   imports: [
     CommonModule,
