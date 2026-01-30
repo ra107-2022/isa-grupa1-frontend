@@ -1,0 +1,67 @@
+/* Full page container */
+.profile-page {
+  display: flex;
+  justify-content: flex-start; /* levi deo ekrana */
+  align-items: flex-start;
+  height: 100vh;
+  padding: 50px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(160deg, #e0f7fa, #ffffff);
+  color: #333;
+}
+
+/* Glavni container sa avatarom i username */
+.profile-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 50px; /* razmak između avatara i username */
+}
+
+/* Avatar sekcija */
+.avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* avatar centriran */
+  gap: 15px;
+}
+
+/* Avatar */
+.avatar {
+  width: 120px;
+  height: 120px;
+  background-color: #2196f3;
+  color: #fff;
+  border-radius: 50%;
+  font-size: 48px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+/* Ispod avatara: ime i prezime + email */
+.avatar-info h2 {
+  margin: 0;
+  font-size: 24px;
+  text-align: center;
+}
+
+.avatar-info .email {
+  margin: 5px 0 0 0;
+  font-size: 16px;
+  color: #555;
+  text-align: center;
+}
+
+/* Username desno od avatara */
+.username-section {
+  display: flex;
+  align-items: center; /* vertikalno centrirano sa avatarom */
+}
+
+.username-section .username {
+  font-size: 30px;
+  color: #333;
+  font-weight: bold;
+}

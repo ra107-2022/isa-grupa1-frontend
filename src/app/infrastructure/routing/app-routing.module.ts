@@ -4,6 +4,7 @@ import { HomeComponent } from '../../layout/home/home.component';
 import { LoginComponent } from '../auth/login/login.component';
 import { AuthGuard } from '../auth/auth.guard';
 import { RegistrationComponent } from '../auth/registration/registration.component';
+import { UserProfileComponent } from '../auth/user-profile/user-profile.component';
 
 const routes: Routes = [
   // Default
@@ -13,6 +14,7 @@ const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
+  { path: 'profile/:id', component: UserProfileComponent },
 
   // Fallback when no prior route is matched
   { path: '**', redirectTo: 'home' },
