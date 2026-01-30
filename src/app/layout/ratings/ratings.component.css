@@ -1,16 +1,14 @@
 .rating-container {
   display: inline-flex;
   align-items: center;
-  /* YouTube uses a light gray in light mode, dark gray in dark mode */
-  background-color: #333333; 
-  border-radius: 40px; /* High radius creates the 'pill' shape */
-  height: 36px;
-  overflow: hidden; /* This clips the button hover effects to the pill shape */
+  background-color: #2b2b2b; 
+  border-radius: 20px; 
+  height: 45px;
+  overflow: hidden; 
   border: 1px solid transparent;
   transition: background-color 0.2s;
 }
 
-/* Like Button Styles */
 .btn-like, .btn-dislike {
   border: none;
   background: none;
@@ -18,31 +16,27 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 0 16px; /* Horizontal padding gives the pill its width */
+  padding: 0 16px;
   height: 100%;
   cursor: pointer;
-  color: #0f0f0f; /* Dark text for light mode */
+  color: #ffffff;
   transition: background-color 0.2s;
 }
 
-/* Vertical line separator */
 .separator {
   width: 1px;
   height: 20px;
-  background-color: #d9d9d9; /* Subtle line */
+  background-color: #d9d9d9;
 }
 
-/* Hover effects - buttons fill their half of the pill */
 .btn-like:hover, .btn-dislike:hover {
   background-color: #858585;
 }
 
 .active mat-icon {
-  /* If using Material Symbols, this fills the icon */
   font-variation-settings: 'FILL' 1;
 }
 
-/* Typography for the count */
 span {
   font-size: 14px;
   font-weight: 500;
