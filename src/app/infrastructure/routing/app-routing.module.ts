@@ -16,7 +16,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegistrationComponent },
   { path: 'upload', component: VideoUploadComponent },
-  { path: 'profile/:id', component: UserProfileComponent },
+  { path: 'user/:id', component: UserProfileComponent },
 
   // Fallback when no prior route is matched
   { path: '**', redirectTo: 'home' },

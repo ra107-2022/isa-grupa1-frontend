@@ -1,0 +1,42 @@
+<div class="comment-section card">
+  <!-- Dodavanje komentara -->
+  <div *ngIf="isAuthenticated" class="add-comment">
+    <textarea [(ngModel)]="newCommentText" placeholder="Dodaj komentar..."></textarea>
+    <button class="btn-primary" (click)="onAddComment()">Add Comment</button>
+  </div>
+
+  <div *ngIf="!isAuthenticated" class="login-note">
+    You must be logged in to add comments.
+  </div>
+
+  <!-- Lista komentara -->
+  <div *ngFor="let comment of comments" class="comment">
+    <div class="comment-header">
+      <span class="username">{{ comment.authorUsername }}</span>
+      <span class="date">{{ comment.createdAt | date:'short' }}</span>
+
+      <!-- dugmad za edit/delete samo ako je korisnik autor -->
+      <div class="actions" *ngIf="isAuthenticated && comment.authorId === currentUserId">
+        <button class="btn-secondary" (click)="editTextMap[comment.commentId] = comment.content">Edit</button>
+        <button class="btn-secondary" (click)="onDeleteComment(comment.commentId)">Delete</button>
+      </div>
+    </div>
+
+    <!-- Edit polje -->
+    <div *ngIf="editTextMap[comment.commentId] !== undefined" class="edit-comment">
+      <textarea [(ngModel)]="editTextMap[comment.commentId]"></textarea>
+      <button class="btn-primary" (click)="onEditComment(comment.commentId)">Save</button>
+      <button class="btn-secondary" (click)="editTextMap[comment.commentId] = undefined">Cancel</button>
+    </div>
+
+    <!-- Prikaz komentara -->
+    <p *ngIf="editTextMap[comment.commentId] === undefined">{{ comment.content }}</p>
+  </div>
+
+  <!-- Paginacija -->
+  <div class="pagination">
+    <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 0">Previous</button>
+    <span>Page {{ currentPage + 1 }}</span>
+    <button class="btn-secondary" (click)="nextPage()" [disabled]="comments.length < pageSize">Next</button>
+  </div>
+</div>
