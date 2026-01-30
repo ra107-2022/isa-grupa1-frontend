@@ -4,7 +4,7 @@ import { CommentDto, Page } from '../model/comment.model';
 @Component({
   selector: 'app-comment',
   templateUrl: './comment.component.html',
-  styleUrls: ['./comment.component.scss']
+  styleUrls: ['./comment.component.css']
 })
 export class CommentComponent implements OnChanges {
 
@@ -87,4 +87,9 @@ export class CommentComponent implements OnChanges {
   canDelete(comment: CommentDto): boolean {
     return this.currentUserId === comment.authorId;
   }
+
+  cancelEdit(commentId: number) {
+    delete this.editTextMap[commentId];
+  }
+
 }
