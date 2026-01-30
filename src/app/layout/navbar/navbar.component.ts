@@ -15,8 +15,7 @@ export class NavbarComponent implements OnInit {
   user: User | undefined;
 
   get isLoggedIn(): boolean {
-    this.authService.checkIfUserExists();
-    return this.user !== undefined && this.user.id !== 0;
+    return this.user?.id !== 0;
   }
 
   onUpload() {
@@ -24,13 +23,26 @@ export class NavbarComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.authService.checkIfUserExists();
+    
     this.authService.user$.subscribe(user => {
+      console.log("aaaa");
+    
+      console.log(user);
       this.user = user;
     });
   }
 
   onLogout(): void {
     this.authService.logout();
+  }
+
+  // get isLoggedIn(): boolean {
+  //   return this.authService.isLoggedIn();
+  // }
+
+  goToMyProfile() {
+    this.router.navigate(['user/me']);
   }
 
 }

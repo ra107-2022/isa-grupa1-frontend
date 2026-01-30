@@ -13,18 +13,13 @@
   <!-- Lista komentara -->
   <div *ngFor="let comment of comments" class="comment">
     <div class="comment-header">
-      <!-- Klik na username vodi na profil korisnika -->
-      <a class="username" 
-        [routerLink]="currentUserId !== comment.authorId ? ['/users', comment.authorId] : '/users/me'">
+      <a class="username" [routerLink]="['/user', comment.authorId]">
         {{ comment.authorUsername }}
       </a>
-
-
-
       <span class="date">{{ comment.createdAt | date:'short' }}</span>
 
       <!-- Dugmad za edit/delete ako je autor -->
-      <div class="actions" *ngIf="isAuthenticated && comment.authorId === currentUserId">
+      <div class="actions" *ngIf="isAuthenticated">
         <button (click)="editTextMap[comment.commentId] = comment.content">Edit</button>
         <button (click)="onDeleteComment(comment.commentId)">Delete</button>
       </div>
@@ -35,7 +30,6 @@
       <textarea [(ngModel)]="editTextMap[comment.commentId]"></textarea>
       <button (click)="onEditComment(comment.commentId)">Save</button>
       <button (click)="cancelEdit(comment.commentId)">Cancel</button>
-
     </div>
 
     <!-- Prikaz komentara -->

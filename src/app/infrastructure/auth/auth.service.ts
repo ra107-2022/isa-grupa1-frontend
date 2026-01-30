@@ -71,4 +71,12 @@ export class AuthService {
         }
         this.setUser();
     }
+
+    isLoggedIn(): boolean {
+        const token = this.tokenStorage.getToken();
+        if(!token) { return false; }
+        const jwtHelperService = new JwtHelperService();
+        return !jwtHelperService.isTokenExpired(token);
+    }
+
 }

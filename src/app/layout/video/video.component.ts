@@ -2,6 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AllVideoInfo, VideoService } from '../../services/video-service/video.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
+import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
+import { AuthService } from 'src/app/infrastructure/auth/auth.service';
+
 
 @Component({
   selector: 'app-video',
@@ -22,11 +26,15 @@ export class VideoComponent implements OnInit {
   isMuted: boolean = false;
   isFullscreen: boolean = false;
 
+  isAuthenticated: boolean = false;
+  currentUserId: number = 0;
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private videoService: VideoService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -36,6 +44,13 @@ export class VideoComponent implements OnInit {
       this.router.navigate(['/home']);
     } else {
       this.loadVideo(this.videoId);
+
+      this.authService.user$.subscribe(user => {
+        this.isAuthenticated = !!user && user.id !== 0;
+        this.currentUserId = user?.id ?? 0;
+      });
+
+      this.authService.checkIfUserExists();
     }
   }
 
@@ -123,4 +138,5 @@ export class VideoComponent implements OnInit {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   }
+  
 }

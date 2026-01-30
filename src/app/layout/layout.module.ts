@@ -14,6 +14,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { RatingsComponent } from './ratings/ratings.component';
 import { VideoComponent } from './video/video.component';
+import { FormsModule } from '@angular/forms';
+import { CommentSectionComponent } from './comment-section/comment-section.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,8 @@ import { VideoComponent } from './video/video.component';
     NavbarComponent,
     VideoCardComponent,
     RatingsComponent,
-    VideoComponent
+    VideoComponent,
+    CommentSectionComponent
   ],
   imports: [
     CommonModule,
@@ -33,7 +36,8 @@ import { VideoComponent } from './video/video.component';
     MatBadgeModule,
     MatTooltipModule,
     MatButtonModule,
-    MatSelectModule
+    MatSelectModule,
+    FormsModule
   ],
   exports: [
     HomeComponent,

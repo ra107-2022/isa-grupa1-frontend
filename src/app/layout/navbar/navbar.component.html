@@ -13,11 +13,18 @@
     </ng-container>
 
     <ng-container *ngIf="isLoggedIn">
+        
         <button mat-raised-button (click)="onUpload()" class="auth-btn logout-btn">
           <mat-icon>add</mat-icon>
           <span>Upload</span>
         </button>
+      <span style="width: 10px"></span>
+        <button mat-raised-button (click)="goToMyProfile()" class="auth-btn logout-btn">
+          <mat-icon>account_circle</mat-icon>
+          <span>My Profile</span>
+        </button>
       <span style="width: 15px"></span>
+      
     </ng-container>
     <ng-container *ngIf="isLoggedIn">
         <button mat-raised-button (click)="onLogout()" class="auth-btn logout-btn">
