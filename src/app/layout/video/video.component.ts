@@ -5,6 +5,8 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { AuthService } from '../../infrastructure/auth/auth.service';
 import { User } from '../../infrastructure/auth/model/user.model';
+import { ActivityType } from '../model/activity-type.enum';
+import { ActivityService } from '../activity.service';
 
 @Component({
   selector: 'app-video',
@@ -32,7 +34,8 @@ export class VideoComponent implements OnInit {
     private router: Router,
     private videoService: VideoService,
     private sanitizer: DomSanitizer,
-    private authService: AuthService
+    private authService: AuthService,
+    private activityService: ActivityService
   ) {}
 
   ngOnInit() {
@@ -51,6 +54,9 @@ export class VideoComponent implements OnInit {
       next: info => { console.log(info); },
       error: err => { console.error('Error happened: ', err); }
     });
+
+    this.activityService.logActivity(this.videoId, ActivityType.VIEW, 3, 3);
+
     this.loadVideo(this.videoId);
   }
 
