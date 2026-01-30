@@ -56,7 +56,13 @@ export class VideoComponent implements OnInit {
       this.router.navigate(['/home']);
     }
 
+
+    this.authService.user$.subscribe(user => {
+        this.isAuthenticated = !!user && user.id !== 0;
+        this.currentUserId = user?.id ?? 0;
+    });
     this.authService.checkIfUserExists();
+
     this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
       next: info => { console.log(info); },
       error: err => { console.error('Error happened: ', err); }

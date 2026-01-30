@@ -42,7 +42,7 @@ export class NavbarComponent implements OnInit {
   // }
 
   goToMyProfile() {
-    this.router.navigate(['user/me']);
+    this.router.navigate(['users/me']);
   }
 
 }
