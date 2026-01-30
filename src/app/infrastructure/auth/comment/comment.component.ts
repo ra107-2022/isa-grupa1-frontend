@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { CommentDto } from '../model/comment.model';
+import { CommentDto, Page } from '../model/comment.model';
 
 @Component({
   selector: 'app-comment',
@@ -8,60 +8,83 @@ import { CommentDto } from '../model/comment.model';
 })
 export class CommentComponent implements OnChanges {
 
+  //  INPUTS
   @Input() comments: CommentDto[] = [];
   @Input() isAuthenticated: boolean = false;
-  @Input() videoId!: number; // id videa za paginaciju
+  @Input() videoId!: number;           // id videa (za reset paginacije)
   @Input() pageSize: number = 20;
+  @Input() currentUserId!: number;
 
-  @Output() addComment = new EventEmitter<string>(); // event za FE da pozove backend
-  @Output() deleteComment = new EventEmitter<number>(); // commentId
+  //  OUTPUTS 
+  @Output() addComment = new EventEmitter<string>();
+  @Output() deleteComment = new EventEmitter<number>();
   @Output() editComment = new EventEmitter<{ commentId: number, content: string }>();
-  @Output() pageChange = new EventEmitter<number>(); // FE paginacija
+  @Output() pageChange = new EventEmitter<number>();
 
+  //  STATE 
   newCommentText: string = '';
-  editTextMap: { [key: number]: string } = {}; // mapiranje commentId na tekst za editovanje
+  editTextMap: { [key: number]: string } = {};
   currentPage: number = 0;
 
-  ngOnChanges(changes: SimpleChanges) {
+  // Pagination metadata
+  totalPages: number = 0;
+  totalComments: number = 0;
+
+  ngOnChanges(changes: SimpleChanges): void {
     if (changes['videoId']) {
-      this.currentPage = 0; // resetuj stranicu ako se menja video
+      this.currentPage = 0;
     }
   }
 
-  // Dodavanje komentara
-  onAddComment() {
+  //  ACTIONS 
+
+  onAddComment(): void {
     const content = this.newCommentText.trim();
-    if (content) {
-      this.addComment.emit(content);
-      this.newCommentText = '';
-    }
+    if (!content) return;
+
+    this.addComment.emit(content);
+    this.newCommentText = '';
   }
 
-  // Brisanje komentara
-  onDeleteComment(commentId: number) {
+  onDeleteComment(commentId: number): void {
     this.deleteComment.emit(commentId);
   }
 
-  // Edit komentara
-  onEditComment(commentId: number) {
+  onEditComment(commentId: number): void {
     const content = this.editTextMap[commentId]?.trim();
-    if (content) {
-      this.editComment.emit({ commentId, content });
-      delete this.editTextMap[commentId];
-    }
+    if (!content) return;
+
+    this.editComment.emit({ commentId, content });
+    delete this.editTextMap[commentId];
   }
 
-  // Paginacija: slecedeca strana
-  nextPage() {
+  //  PAGINATION 
+
+  nextPage(): void {
+    if (this.currentPage + 1 >= this.totalPages) return;
     this.currentPage++;
     this.pageChange.emit(this.currentPage);
   }
 
-  // Paginacija: prethodna strana
-  prevPage() {
-    if (this.currentPage > 0) {
-      this.currentPage--;
-      this.pageChange.emit(this.currentPage);
-    }
+  prevPage(): void {
+    if (this.currentPage === 0) return;
+    this.currentPage--;
+    this.pageChange.emit(this.currentPage);
+  }
+
+
+  // Pozvati kada dobijemo novu stranicu komentara sa servisa
+  setCommentsPage(pageData: Page<CommentDto>): void {
+    this.comments = pageData.content;
+    this.totalPages = pageData.totalPages;
+    this.totalComments = pageData.totalElements;
+  }
+
+  canEdit(comment: CommentDto): boolean {
+    return this.currentUserId === comment.authorId;
+  }
+
+  canDelete(comment: CommentDto): boolean {
+    return this.currentUserId === comment.authorId;
   }
 }

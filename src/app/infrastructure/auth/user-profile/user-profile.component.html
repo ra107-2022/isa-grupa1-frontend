@@ -12,21 +12,47 @@
 <div class="profile-page" *ngIf="!loading && userProfile">
 
   <div class="profile-container">
-    <!-- Avatar i info ispod -->
+
+    <!-- Avatar + osnovne info -->
     <div class="avatar-section">
       <div class="avatar">
-        {{ userProfile.username.charAt(0).toUpperCase() || '?' }}
+        {{ (userProfile.username || '').charAt(0).toUpperCase() || '?' }}
       </div>
+
       <div class="avatar-info">
-        <h2>{{ userProfile.name || '-' }} {{ userProfile.surname || '-' }}</h2>
+
+        <!-- Display profile info when not editing -->
+        <h2 *ngIf="!isEditing">
+          {{ (userProfile.name || userProfile.surname)
+            ? (userProfile.name || '') + ' ' + (userProfile.surname || '')
+            : 'No name provided' }}
+        </h2>
+
+        <!-- Edit form -->
+        <form *ngIf="isEditing" [formGroup]="editForm" (ngSubmit)="onSave()">
+          <input formControlName="name" placeholder="Name" />
+          <input formControlName="surname" placeholder="Surname" />
+          <input formControlName="username" placeholder="Username" />
+          <input formControlName="email" placeholder="Email" type="email" />
+        </form>
+
         <p class="email">{{ userProfile.email || '-' }}</p>
       </div>
     </div>
 
-    <!-- Username desno od avatara -->
+    <!-- Username -->
     <div class="username-section">
       <p class="username">@{{ userProfile.username || 'unknown' }}</p>
     </div>
+
+    <!-- Actions (Edit/Delete) -->
+    <div class="profile-actions" >
+      <button *ngIf="!isEditing" (click)="onEdit()">Edit Profile</button>
+      <button *ngIf="isEditing" (click)="onSave()" [disabled]="editForm.invalid">Save</button>
+      <button *ngIf="isEditing" (click)="onCancelEdit()">Cancel</button>
+      <button class="delete" (click)="onDelete()">Delete Profile</button>
+    </div>
+
   </div>
 
 </div>

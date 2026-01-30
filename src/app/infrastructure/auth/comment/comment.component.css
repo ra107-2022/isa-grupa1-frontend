@@ -7,84 +7,167 @@
   padding: var(--space-lg);
 }
 
+/* Add comment */
 .add-comment {
   display: flex;
   flex-direction: column;
   gap: var(--space-sm);
-
-  textarea {
-    width: 100%;
-    padding: var(--space-sm);
-    border-radius: var(--radius-md);
-    border: 1px solid var(--color-border-soft);
-    background-color: var(--color-bg-secondary);
-    color: var(--color-text-main);
-    resize: vertical;
-  }
-
-  button {
-    align-self: flex-end;
-  }
 }
 
+.add-comment textarea {
+  width: 100%;
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-soft);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+  resize: vertical;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+}
+
+.add-comment button {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  border: none;
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+  cursor: pointer;
+}
+
+.add-comment button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Login note */
 .login-note {
   color: var(--color-text-secondary);
   font-style: italic;
 }
 
+/* Individual comment */
 .comment {
   padding: var(--space-sm) 0;
   border-bottom: 1px solid var(--color-border-soft);
+}
 
-  .comment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--space-xs);
+.comment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-xs);
+}
 
-    .username {
-      font-weight: 600;
-      color: var(--color-text-main);
-    }
+.comment-header .username {
+  font-weight: 600;
+  color: var(--color-accent);
+  cursor: pointer;
+  text-decoration: none;
+}
 
-    .date {
-      font-size: var(--font-size-sm);
-      color: var(--color-text-secondary);
-    }
+.comment-header .username:hover {
+  text-decoration: underline;
+}
 
-    .actions {
-      display: flex;
-      gap: var(--space-xs);
+.comment-header .date {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
 
-      button {
-        padding: 2px 6px;
-        font-size: var(--font-size-sm);
-      }
-    }
-  }
+.comment-header .actions {
+  display: flex;
+  gap: var(--space-xs);
+}
 
-  .edit-comment {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
+.comment-header .actions button {
+  padding: 2px 6px;
+  font-size: var(--font-size-sm);
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+}
 
-    textarea {
-      width: 100%;
-      padding: var(--space-xs);
-      border-radius: var(--radius-md);
-      border: 1px solid var(--color-border-soft);
-      background-color: var(--color-bg-secondary);
-      color: var(--color-text-main);
-      resize: vertical;
-    }
+.comment-header .actions button:hover {
+  background-color: var(--color-bg-muted);
+}
 
-    button {
-      width: fit-content;
-    }
-  }
+/* Edit comment */
+.edit-comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin-top: var(--space-xs);
+}
 
-  p {
-    margin: 0;
-    color: var(--color-text-main);
-  }
+.edit-comment textarea {
+  width: 100%;
+  padding: var(--space-xs);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-soft);
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+  resize: vertical;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+}
+
+.edit-comment button {
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+}
+
+.edit-comment button:first-child {
+  background-color: var(--color-primary);
+  color: var(--color-text-on-primary);
+}
+
+.edit-comment button:first-child:hover {
+  background-color: var(--color-primary-dark);
+}
+
+.edit-comment button:last-child {
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+}
+
+.edit-comment button:last-child:hover {
+  background-color: var(--color-bg-muted);
+}
+
+/* Comment content */
+.comment p {
+  margin: 0;
+  color: var(--color-text-main);
+  white-space: pre-wrap; /* čuva višestruke linije */
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  margin-top: var(--space-md);
+}
+
+.pagination button {
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  background-color: var(--color-bg-secondary);
+  color: var(--color-text-main);
+}
+
+.pagination button:hover {
+  background-color: var(--color-bg-muted);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

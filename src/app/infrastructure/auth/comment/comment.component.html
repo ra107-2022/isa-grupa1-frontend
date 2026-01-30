@@ -12,7 +12,11 @@
   <!-- Lista komentara -->
   <div *ngFor="let comment of comments" class="comment">
     <div class="comment-header">
-      <span class="username">{{ comment.authorUsername }}</span>
+      <!-- Klik na username vodi na profil korisnika -->
+      <a class="username" [routerLink]="['/user', comment.authorId]">
+        {{ comment.authorUsername }}
+      </a>
+
       <span class="date">{{ comment.createdAt | date:'short' }}</span>
 
       <!-- dugmad za edit/delete samo ako je korisnik autor -->
@@ -36,7 +40,7 @@
   <!-- Paginacija -->
   <div class="pagination">
     <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 0">Previous</button>
-    <span>Page {{ currentPage + 1 }}</span>
-    <button class="btn-secondary" (click)="nextPage()" [disabled]="comments.length < pageSize">Next</button>
+    <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+    <button class="btn-secondary" (click)="nextPage()" [disabled]="currentPage + 1 >= totalPages">Next</button>
   </div>
 </div>

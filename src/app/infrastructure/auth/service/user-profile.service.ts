@@ -15,4 +15,12 @@ export class UserProfileService {
   getUserProfile(id: number): Observable<UserProfile> {
     return this.http.get<UserProfile>(`${this.baseUrl}/${id}`);
   }
+
+  updateUserProfile(id: number, profileData: Partial<UserProfile>): Observable<UserProfile> {
+    return this.http.put<UserProfile>(`${this.baseUrl}/${id}`, profileData);
+  }
+
+  deleteUserProfile(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }
