@@ -1,3 +1,4 @@
+import { Router } from '@angular/router';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { HomeService } from '../home.service';
@@ -13,14 +14,18 @@ export class HomeComponent implements OnInit, OnDestroy {
   videos: VideoCard[] = [];
 
   constructor(private homeService: HomeService,
-              private sanitizer: DomSanitizer
+              private sanitizer: DomSanitizer,
+              private router: Router
   ) { }
 
+  goToUpload() {
+    this.router.navigate(['/upload']);
+  }
   ngOnInit() {
     this.homeService.getPagedVideos(0, 10).subscribe(videoIds => {
       videoIds.forEach(videoId => {
         this.homeService.getVideoInfo(videoId).subscribe(videoInfo => {
-          let videoCard: VideoCard = {
+          const videoCard: VideoCard = {
             id: videoId,
             title: videoInfo.title,
             creator: videoInfo.userUsername,
@@ -44,5 +49,5 @@ export class HomeComponent implements OnInit, OnDestroy {
       URL.revokeObjectURL(url);
     }
   });
-}
+  }
 }

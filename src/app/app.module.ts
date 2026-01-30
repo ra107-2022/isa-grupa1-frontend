@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './infrastructure/routing/app-routing.module';
@@ -22,6 +23,7 @@ import { CommonModule } from '@angular/common';
     LayoutModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    FormsModule,
     CommonModule
   ],
   providers: [
