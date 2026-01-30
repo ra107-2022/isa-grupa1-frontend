@@ -12,12 +12,14 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { RatingsComponent } from './ratings/ratings.component';
 
 @NgModule({
   declarations: [
     HomeComponent,
     NavbarComponent,
-    VideoCardComponent
+    VideoCardComponent,
+    RatingsComponent
   ],
   imports: [
     CommonModule,

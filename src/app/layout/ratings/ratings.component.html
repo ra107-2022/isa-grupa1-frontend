@@ -1,0 +1,13 @@
+<div class="rating-container">
+  <button class="btn-like" (click)="onLike()" [class.active]="userRating === 'LIKE'">
+    <mat-icon>{{ userRating === 'LIKE' ? 'thumb_up' : 'thumb_up_off_alt' }}</mat-icon>
+    <span>{{ formatCount(likeCount) }}</span>
+  </button>
+
+  <div class="separator"></div>
+
+  <button class="btn-dislike" (click)="onDislike()" [class.active]="userRating === 'DISLIKE'">
+    <mat-icon>{{ userRating === 'DISLIKE' ? 'thumb_down' : 'thumb_down_off_alt' }}</mat-icon>
+    <span>{{ formatCount(dislikeCount) }}</span>
+  </button>
+</div>
