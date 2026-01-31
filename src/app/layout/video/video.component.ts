@@ -9,6 +9,7 @@ import { ActivityType } from '../model/activity-type.enum';
 import { ActivityService } from '../activity.service';
 import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
 import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
+import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
 
 
 @Component({
@@ -41,7 +42,8 @@ export class VideoComponent implements OnInit {
     private videoService: VideoService,
     private sanitizer: DomSanitizer,
     private authService: AuthService,
-    private activityService: ActivityService
+    private activityService: ActivityService,
+    private geolocService: GeolocService
     
   ) {}
 
@@ -64,11 +66,14 @@ export class VideoComponent implements OnInit {
     this.authService.checkIfUserExists();
 
     this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
-      next: info => { console.log(info); },
+      next: info => { 
+        console.log(info);
+        this.geolocService.getCurrentLocation().subscribe(pos => {
+          this.activityService.logActivity(this.videoId, ActivityType.VIEW, pos.longitude, pos.latitude);
+        });
+      },
       error: err => { console.error('Error happened: ', err); }
     });
-
-    this.activityService.logActivity(this.videoId, ActivityType.VIEW, 3, 3);
 
     this.loadVideo(this.videoId);
   }

@@ -4,6 +4,7 @@ import { ActivityService } from '../activity.service';
 import { ActivityType } from '../model/activity-type.enum';
 import { AuthService } from 'src/app/infrastructure/auth/auth.service';
 import { User } from 'src/app/infrastructure/auth/model/user.model';
+import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
 
 @Component({
   selector: 'app-video-rating',
@@ -26,7 +27,8 @@ export class RatingsComponent implements OnInit {
 
   constructor(private ratingsService: RatingsService,
               private activityService: ActivityService,
-              private authService: AuthService
+              private authService: AuthService,
+              private geolocService: GeolocService
   ) {}
 
   ngOnInit(): void {
@@ -52,7 +54,9 @@ export class RatingsComponent implements OnInit {
       this.ratingsService.getRatingsCount(this.videoId).subscribe(counts => {
         this.likeCount = counts.likes;
         this.dislikeCount = counts.dislikes;
-        this.activityService.logActivity(this.videoId, userRating.ratingType === 'LIKE' ? ActivityType.LIKE : ActivityType.NONE, 0, 0);
+        this.geolocService.getCurrentLocation().subscribe(pos => {
+          this.activityService.logActivity(this.videoId, userRating.ratingType === 'LIKE' ? ActivityType.LIKE : ActivityType.NONE, pos.longitude, pos.latitude);
+        });
       });
     });
   }
@@ -67,7 +71,9 @@ export class RatingsComponent implements OnInit {
       this.ratingsService.getRatingsCount(this.videoId).subscribe(counts => {
         this.dislikeCount = counts.dislikes;
         this.likeCount = counts.likes;
-        this.activityService.logActivity(this.videoId, userRating.ratingType === 'DISLIKE' ? ActivityType.DISLIKE : ActivityType.NONE, 0, 0);
+        this.geolocService.getCurrentLocation().subscribe(pos => {
+          this.activityService.logActivity(this.videoId, userRating.ratingType === 'DISLIKE' ? ActivityType.DISLIKE : ActivityType.NONE, pos.longitude, pos.latitude);
+        });
       });
     });
   }
