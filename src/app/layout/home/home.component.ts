@@ -6,6 +6,7 @@ import { VideoCard } from '../model/video-card.model';
 import { ActivityService } from '../activity.service';
 import { forkJoin, map, of, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/infrastructure/auth/auth.service';
+import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
 
 @Component({
   selector: 'app-home',
@@ -20,42 +21,45 @@ export class HomeComponent implements OnInit, OnDestroy {
               private sanitizer: DomSanitizer,
               private router: Router,
               private activityService: ActivityService,
-              private authService: AuthService
+              private authService: AuthService,
+              private geolocService: GeolocService
   ) { }
 
   showLocalTrendingVideos() {
-    this.activityService.getTrendingVideos(3, 3, 10000, 10).pipe(
-      switchMap(videoIds => {
-      if (!videoIds || videoIds.length === 0) {
-        return of([]);
-      }
+    this.geolocService.getCurrentLocation().subscribe(pos => {
+      this.activityService.getTrendingVideos(pos.longitude, pos.latitude, 10000, 10).pipe(
+        switchMap(videoIds => {
+        if (!videoIds || videoIds.length === 0) {
+          return of([]);
+        }
 
-      const requests = videoIds.map(videoId =>
-        forkJoin({
-          info: this.homeService.getVideoInfo(videoId),
-          thumbnail: this.homeService.getThumbnail(videoId)
-        }).pipe(
-          map(res => {
-            const objectURL = URL.createObjectURL(res.thumbnail);
-            return {
-              id: videoId,
-              title: res.info.title,
-              creator: res.info.userUsername,
-              views: res.info.viewCount,
-              thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
-            } as VideoCard;
-          })
-        )
-      );
-      // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
-      return forkJoin(requests);
-    })
-  ).subscribe({
-    next: (orderedVideos) => {
-      this.videos = orderedVideos;
-    },
-    error: (err) => console.error('Greška pri učitavanju:', err)
-  });
+        const requests = videoIds.map(videoId =>
+          forkJoin({
+            info: this.homeService.getVideoInfo(videoId),
+            thumbnail: this.homeService.getThumbnail(videoId)
+          }).pipe(
+            map(res => {
+              const objectURL = URL.createObjectURL(res.thumbnail);
+              return {
+                id: videoId,
+                title: res.info.title,
+                creator: res.info.userUsername,
+                views: res.info.viewCount,
+                thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
+              } as VideoCard;
+            })
+          )
+        );
+        // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
+        return forkJoin(requests);
+      })
+    ).subscribe({
+      next: (orderedVideos) => {
+        this.videos = orderedVideos;
+      },
+      error: (err) => console.error('Greška pri učitavanju:', err)
+    });
+    });
   }
 
   ngOnInit() {
@@ -69,7 +73,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           return of([]);
         }
 
-        const requests = videoIds.map(videoId =>
+        const requests = videoIds.reverse().map(videoId =>
           forkJoin({
             info: this.homeService.getVideoInfo(videoId),
             thumbnail: this.homeService.getThumbnail(videoId)

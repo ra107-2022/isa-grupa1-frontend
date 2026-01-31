@@ -2,6 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
 import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { ActivityService } from '../activity.service';
+import { ActivityType } from '../model/activity-type.enum';
+import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
 
 @Component({
   selector: 'app-comment-section',
@@ -21,7 +24,9 @@ export class CommentSectionComponent implements OnInit {
   totalPages: number = 1;
 
   constructor(private commentService: CommentService,
-              private snackBar: MatSnackBar
+              private snackBar: MatSnackBar,
+              private activityService: ActivityService,
+              private geolocService: GeolocService
   ) {}
 
   ngOnInit() {
@@ -42,6 +47,9 @@ export class CommentSectionComponent implements OnInit {
       next: (comment) => {
         this.comments.unshift(comment);
         this.newCommentText = '';
+        this.geolocService.getCurrentLocation().subscribe(pos => {
+          this.activityService.logActivity(this.videoId, ActivityType.COMMENT, pos.longitude, pos.latitude);
+        });
       },
       error: (err) => {
         console.error('Error adding comment:', err)
