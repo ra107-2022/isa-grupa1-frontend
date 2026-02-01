@@ -30,10 +30,15 @@ export class CommentSectionComponent implements OnInit {
 
   loadComments() {
     this.commentService.getComments(this.videoId, this.currentPage).subscribe({
-      next: (comments) => this.comments = comments,
+      next: (page) => {
+        this.comments = page.content;
+        this.totalPages = page.totalPages;
+        this.currentPage = page.number;
+      },
       error: (err) => console.error('Error loading comments:', err)
     });
   }
+
 
   onAddComment() {
     if(!this.newCommentText.trim()) return;
@@ -47,7 +52,16 @@ export class CommentSectionComponent implements OnInit {
         console.error('Error adding comment:', err)
         console.error('Status code:', err.status);
         console.error('Error message:', err.message);
+        this.snackBar.open(
+          'Adding comment failed. Please try again later.',
+          'OK',
+          { duration: 3000,
+            horizontalPosition: 'left',
+            verticalPosition: 'bottom'
+           }
+        );
       }
+
     });
   }
 
@@ -90,7 +104,18 @@ export class CommentSectionComponent implements OnInit {
 
   onDeleteComment(commentId: number) {
     this.commentService.deleteComment(commentId).subscribe({
-      next: () => this.comments = this.comments.filter(c => c.commentId !== commentId),
+      next: () => {
+        this.comments = this.comments.filter(c => c.commentId !== commentId);
+        this.snackBar.open(
+          'Comment deleted successfully.',
+          'OK',
+          { 
+            duration: 3000,
+            horizontalPosition: 'left',
+            verticalPosition: 'bottom'
+          }
+        );
+      },
       error: (err) => console.error('Error deleting comment:', err)
     });
   }

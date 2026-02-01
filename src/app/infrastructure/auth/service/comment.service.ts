@@ -13,12 +13,16 @@ export class CommentService {
   constructor(private http: HttpClient) {}
 
   // Dohvati komentare za video (paginacija)
-  getComments(videoId: number, page: number = 0, size: number = 20): Observable<CommentDto[]> {
-    return this.http.get<Page<CommentDto>>(`${this.apiUrl}/video/${videoId}?page=${page}&size=${size}`)
-      .pipe(
-        map(pageData => pageData.content)
-      );
+ getComments(
+    videoId: number,
+    page: number = 0,
+    size: number = 20
+  ): Observable<Page<CommentDto>> {
+    return this.http.get<Page<CommentDto>>(
+      `${this.apiUrl}/video/${videoId}?page=${page}&size=${size}`
+    );
   }
+
 
   // Kreiraj komentar
   addComment(videoId: number, content: string): Observable<CommentDto> {
