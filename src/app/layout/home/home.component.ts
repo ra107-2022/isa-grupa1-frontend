@@ -17,24 +17,27 @@ export class HomeComponent implements OnInit, OnDestroy {
   thumbnailUrl: SafeUrl | undefined;
   videos: VideoCard[] = [];
 
-  constructor(private homeService: HomeService,
-              private sanitizer: DomSanitizer,
-              private router: Router,
-              private activityService: ActivityService,
-              private authService: AuthService,
-              private geolocService: GeolocService
+  showingTrending: boolean = false;
+  showChart: boolean = false;
+
+  constructor(
+    private homeService: HomeService,
+    private sanitizer: DomSanitizer,
+    private router: Router,
+    private activityService: ActivityService,
+    private authService: AuthService,
+    private geolocService: GeolocService
   ) { }
 
   showLocalTrendingVideos() {
     this.geolocService.getCurrentLocation().subscribe(pos => {
       this.activityService.getTrendingVideos(pos.longitude, pos.latitude, 10000, 10).pipe(
         switchMap(videoIds => {
-        if (!videoIds || videoIds.length === 0) {
-          return of([]);
-        }
+          if (!videoIds || videoIds.length === 0) {
+            return of([]);
+          }
 
-        const requests = videoIds.map(videoId =>
-          forkJoin({
+          const requests = videoIds.map(videoId => forkJoin({
             info: this.homeService.getVideoInfo(videoId),
             thumbnail: this.homeService.getThumbnail(videoId)
           }).pipe(
@@ -48,17 +51,16 @@ export class HomeComponent implements OnInit, OnDestroy {
                 thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
               } as VideoCard;
             })
-          )
-        );
-        // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
-        return forkJoin(requests);
-      })
-    ).subscribe({
-      next: (orderedVideos) => {
-        this.videos = orderedVideos;
-      },
-      error: (err) => console.error('Greška pri učitavanju:', err)
-    });
+          ));
+          // forkJoin ovde garantuje da će rezultati biti u istom redosledu kao i 'requests' niz
+          return forkJoin(requests);
+        })
+      ).subscribe({
+        next: (orderedVideos) => {
+          this.videos = orderedVideos;
+        },
+        error: (err) => console.error('Greška pri učitavanju:', err)
+      });
     });
   }
 
@@ -105,6 +107,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigate([`/video/${id}`]);
   }
 
+  toggleChart() {
+    this.showChart = !this.showChart;
+  }
+
+  closeChart() {
+    this.showChart = false;
+  }
+
   ngOnDestroy() {
     this.videos.forEach(video => {
       if (video.thumbnailSafeUrl) {
@@ -112,6 +122,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         URL.revokeObjectURL(url);
       }
     });
+  }
+
+  swapShowing() {
+    this.showingTrending = !this.showingTrending;
+    if (this.showingTrending) {
+      this.showLocalTrendingVideos();
+    } else {
+      this.showChart = false;
+      this.loadVideos();
+    }
   }
 
 }

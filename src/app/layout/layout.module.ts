@@ -16,6 +16,7 @@ import { RatingsComponent } from './ratings/ratings.component';
 import { VideoComponent } from './video/video.component';
 import { FormsModule } from '@angular/forms';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
+import { PerformanceGraphComponent } from './performance-graph/performance-graph.component';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { CommentSectionComponent } from './comment-section/comment-section.compo
     VideoCardComponent,
     RatingsComponent,
     VideoComponent,
-    CommentSectionComponent
+    CommentSectionComponent,
+    PerformanceGraphComponent
   ],
   imports: [
     CommonModule,
