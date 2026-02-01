@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export interface GeolocPos {
   latitude: number,
@@ -11,13 +13,34 @@ export interface GeolocPos {
 })
 export class GeolocService {
 
-  constructor() { }
+  constructor(
+    private http: HttpClient
+  ) { }
+
+  getLocationFromIp(): Observable<GeolocPos> {
+    return this.http.get<any>('http://ip-api.com/json/').pipe(
+      map(res => ({
+        latitude: res.lat,
+        longitude: res.lon,
+      }))
+    );
+  }
 
   getCurrentLocation(): Observable<GeolocPos> {
     return new Observable(obs => {
       if (!navigator.geolocation) {
-        obs.error('Geolocation is not supported by your browser!');
-        return;
+        this.getLocationFromIp().subscribe({
+          next: (pos) => {
+            obs.next({
+              latitude: pos.latitude,
+              longitude: pos.longitude,
+            });
+            obs.complete();
+          },
+          error: (err) => {
+            obs.error('Can\'t get location from IP address! ' + err);
+          }
+        });
       }
 
       navigator.geolocation.getCurrentPosition(
@@ -28,20 +51,19 @@ export class GeolocService {
           });
           obs.complete();
         },
-        (error) => {
-          let errorMsg = 'Unkown error!';
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMsg = 'User denied location permission';
-              break;
-            case error.POSITION_UNAVAILABLE:
-              errorMsg = 'Location information unavailable';
-              break;
-            case error.TIMEOUT:
-              errorMsg = 'Location request timed out';
-              break;
-          }
-          obs.error(errorMsg);
+        () => {
+          this.getLocationFromIp().subscribe({
+            next: (pos) => {
+              obs.next({
+                latitude: pos.latitude,
+                longitude: pos.longitude,
+              });
+              obs.complete();
+            },
+            error: (err) => {
+              obs.error('Can\'t get location from IP address! ' + err);
+            }
+          });
         },
         {
           enableHighAccuracy: true,

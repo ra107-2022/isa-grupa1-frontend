@@ -1,0 +1,24 @@
+<div class="performance-container">
+  <h2>Performance Metrics</h2>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>Avg Response Time</h3>
+      <p>{{ stats.avgResponseTime.toFixed(2) }} ms</p>
+    </div>
+    <div class="stat-card">
+      <h3>Min Response Time</h3>
+      <p>{{ stats.minResponseTime.toFixed(2) }} ms</p>
+    </div>
+    <div class="stat-card">
+      <h3>Max Response Time</h3>
+      <p>{{ stats.maxResponseTime.toFixed(2) }} ms</p>
+    </div>
+    <div class="stat-card">
+      <h3>Total Requests</h3>
+      <p>{{ stats.totalRequests }}</p>
+    </div>
+  </div>
+
+  <canvas id="performanceChart"></canvas>
+</div>

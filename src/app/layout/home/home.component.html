@@ -1,15 +1,40 @@
-<button mat-raised-button
-		color="primary"
-		(click)="showLocalTrendingVideos()"
-		style="margin: 10px;">
-	<span>Show local trending videos</span>
-</button>
-<button mat-raised-button
-		color="primary"
-		(click)="loadVideos()"
-		style="margin: 10px;">
-	<span>Show normal feed</span>
-</button>
+<div class="trending-page">
+  <div class="header">
+
+    <div class="chart-toggle-wrapper">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="swapShowing()"
+        style="margin: 10px;"
+      >
+        {{ showingTrending ? "Show normal feed" : "Show trending" }}
+      </button>
+
+      <span class="spacer"></span>
+
+      <button
+        class="chart-toggle-btn"
+        (click)="toggleChart()"
+        *ngIf="showingTrending"
+      >
+        Performance Chart
+        <span class="arrow" [class.open]="showChart">v</span>
+      </button>
+
+      <div class="chart-dropdown" *ngIf="showChart">
+        <app-performance-graph></app-performance-graph>
+      </div>
+    </div>
+
+  </div>
+
+  <div
+    class="click-catcher"
+    *ngIf="showChart"
+    (click)="closeChart()"
+  ></div>
+</div>
 
 <div style="display: flex; flex-wrap: wrap; gap: 32px; padding: 24px; background: var(--color-bg-main, #181818);">
 	<div *ngFor="let video of videos">
