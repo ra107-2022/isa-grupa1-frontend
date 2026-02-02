@@ -44,10 +44,11 @@
         (change)="onVideoSelect($event)"
         accept="video/*"
         required
+        class="darker-font"
         [disabled]="uploading"
       >
       <div class="file-info" *ngIf="videoFile">
-        <span>{{ videoFile.name }}</span>
+        <span class="darker-font">{{ videoFile.name }}</span>
         <span class="file-size">({{ (videoFile.size / 1024 / 1024).toFixed(2) }} MB)</span>
       </div>
     </div>
@@ -60,10 +61,11 @@
         (change)="onThumbnailSelect($event)"
         accept="image/*"
         required
+        class="darker-font"
         [disabled]="uploading"
       >
       <div class="thumbnail-preview" *ngIf="thumbnailPreview">
-        <img [src]="thumbnailPreview" alt="Thumbnail preview">
+        <img [src]="thumbnailPreview" alt="Thumbnail preview" id="thumbnailImg">
       </div>
     </div>
 
@@ -91,8 +93,8 @@
       </button>
 
       <div *ngIf="uploadForm.latitude && uploadForm.longitude">
-        <p>Latitude: {{ uploadForm.latitude }}</p>
-        <p>Longitude: {{ uploadForm.longitude }}</p>
+        <p class="darker-font">Latitude: {{ uploadForm.latitude }}</p>
+        <p class="darker-font">Longitude: {{ uploadForm.longitude }}</p>
       </div>
     </div>
 
@@ -105,6 +107,7 @@
           [(ngModel)]="uploadForm.latitude"
           name="latitude"
           step="any"
+          class="darker-font"
           placeholder="e.g., 40.7128"
           [disabled]="uploading"
         >
@@ -119,12 +122,12 @@
           name="longitude"
           step="any"
           placeholder="e.g., -74.0060"
+          class="darker-font"
           [disabled]="uploading"
         >
       </div>
     </div>
 
-    <!-- Progress Bar -->
     <div class="progress-container" *ngIf="uploading">
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="uploadProgress">
@@ -134,7 +137,6 @@
       <p class="progress-text">Uploading... Please don't close this page</p>
     </div>
 
-    <!-- Buttons -->
     <div class="button-group">
       <button
         type="button"
@@ -142,7 +144,7 @@
         (click)="cancelUpload()"
         [disabled]="uploading"
       >
-        Cancel
+        Clear
       </button>
       <button
         type="submit"

@@ -161,10 +161,16 @@ export class VideoUploadComponent {
       longitude: null,
       tags: ''
     };
+    const videoInput = document.getElementById('video') as HTMLInputElement;
+    videoInput.value = '';
     this.videoFile = null;
-    this.thumbnailFile = null;
     this.videoPreview = null;
+
+    const thumbnailInput = document.getElementById('thumbnail') as HTMLInputElement;
+    thumbnailInput.value = '';
     this.thumbnailFile = null;
+    this.thumbnailPreview = null;
+
     this.uploadProgress = 0;
     this.uploadSuccess = false;
     this.uploadError = null;
