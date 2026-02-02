@@ -85,6 +85,11 @@ h2 {
   font-size: 14px;
 }
 
+.darker-font {
+  font-size: 14px;
+  color: #666;
+}
+
 .file-size {
   color: #666;
   margin-left: 10px;
