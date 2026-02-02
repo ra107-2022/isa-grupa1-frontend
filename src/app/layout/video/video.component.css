@@ -260,3 +260,14 @@
     font-size: 12px;
   }
 }
+
+.uploader-details a {
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.uploader-details a:hover {
+  text-decoration: underline;
+  color: #714ad5;
+}
+
