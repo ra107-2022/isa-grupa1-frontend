@@ -22,4 +22,8 @@ export class HomeService {
       const params = { start: page, count: size };
       return this.http.get<number[]>(environment.apiHost + `videos/get_page`, { params });
     }
+
+    getLatestTrending(): Observable<any> {
+      return this.http.get<any>(`${environment.apiHost}videos/trending`);
+    }
 }
