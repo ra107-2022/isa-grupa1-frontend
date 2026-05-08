@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AllVideoInfo, VideoService } from '../../services/video-service/video.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -18,6 +18,7 @@ import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
   styleUrls: ['./video.component.css']
 })
 export class VideoComponent implements OnInit {
+  @ViewChild('videoElement') videoElement!: ElementRef<HTMLVideoElement>;
   user: User | undefined;
 
   videoId: number = 0;
@@ -27,11 +28,16 @@ export class VideoComponent implements OnInit {
   error: string | null = '';
 
   isPlaying: boolean = false;
+  isLive: boolean = false;
   currentTime: number = 0;
   duration: number = 0;
   volume: number = 1;
   isMuted: boolean = false;
   isFullscreen: boolean = false;
+
+  showCountdown: boolean = false;
+  countdownText: string = '';
+  private countdownTimerId: ReturnType<typeof setInterval> | null = null;
 
   isAuthenticated: boolean = false;
   currentUserId: number = 0;
@@ -58,7 +64,6 @@ export class VideoComponent implements OnInit {
       this.router.navigate(['/home']);
     }
 
-
     this.authService.user$.subscribe(user => {
         this.isAuthenticated = !!user && user.id !== 0;
         this.currentUserId = user?.id ?? 0;
@@ -84,9 +89,11 @@ export class VideoComponent implements OnInit {
 
     this.videoService.getAllVideoInfo(id).subscribe({
       next: (info) => {
-        this.video = info;
+        this.video = this.normalizePremiereDate(info);
         this.videoUrl = this.videoService.getVideoUrl(id);
+        this.setupVideoCountdown();
         this.loading = false;
+        this.checkPremiereStatus();
       },
       error: (err) => {
         console.error('Error loading video: ', err);
@@ -94,6 +101,23 @@ export class VideoComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  private normalizePremiereDate(info: AllVideoInfo): AllVideoInfo {
+    const rawDate = (info as any).premiereDate ?? (info as any).premiere_date;
+    if (!rawDate) {
+      return info;
+    }
+
+    const parsedDate = rawDate instanceof Date ? rawDate : new Date(rawDate);
+    if (isNaN(parsedDate.getTime())) {
+      return info;
+    }
+
+    return {
+      ...info,
+      premiereDate: parsedDate,
+    };
   }
 
   onVideoError(event: any) {
@@ -134,6 +158,42 @@ export class VideoComponent implements OnInit {
     console.log('Video currentSrc:', video.currentSrc);
   }
 
+  checkPremiereStatus(): void {
+    if (!this.video?.premiereDate) {
+      this.isLive = false;
+      console.log('No premiere date, treating as regular video');
+      console.log('Video info:', this.video);
+      return;
+    }
+
+    const now = new Date();
+    const timeDiffMs = this.video.premiereDate.getTime() - now.getTime();
+
+    if (timeDiffMs <= 0) {
+      this.isLive = true;
+      this.syncVideo();
+    }
+  }
+
+  syncVideo(): void {
+    if (!this.video || !this.isLive || !this.videoElement?.nativeElement || !this.video.premiereDate) {
+      return;
+    }
+
+    const video = this.videoElement.nativeElement;
+    const now = new Date();
+    
+    const offsetSeconds = (now.getTime() - this.video.premiereDate.getTime()) / 1000;
+
+    if (Math.abs(video.currentTime - offsetSeconds) > 1) {
+      video.currentTime = offsetSeconds;
+    }
+    
+    video.play().catch(err => {
+      console.log('Autoplay prevented', err);
+    });
+  }
+
   formatDate(dateString: string): string {
     const date =  new Date(dateString);
     return date.toLocaleDateString('en-GB', {
@@ -147,6 +207,72 @@ export class VideoComponent implements OnInit {
     this.router.navigate(['/home']);
   }
 
+  get premiereDateString(): string | null {
+    if (!this.video?.premiereDate) {
+      return null;
+    }
+    return this.video.premiereDate.toISOString();
+  }
+
+  setupVideoCountdown() {
+    if (!this.video || !this.video.premiereDate) return;
+    this.clearCountdown();
+
+    const premiereDate = this.video.premiereDate;
+    const now = Date.now();
+    if (premiereDate.getTime() <= now) {
+      this.showCountdown = false;
+      return;
+    }
+
+    this.showCountdown = true;
+    this.updateCountdown();
+    this.countdownTimerId = setInterval(() => this.updateCountdown(), 1000);
+  }
+
+  updateCountdown() {
+    if (!this.video || !this.video.premiereDate) return;
+    const premiereDate = this.video.premiereDate;
+
+    const remaining = premiereDate.getTime() - Date.now();
+    if (remaining <= 0) {
+      this.clearCountdown();
+      this.isLive = true;
+      return;
+    }
+
+    const seconds = Math.floor(remaining / 1000) % 60;
+    const minutes = Math.floor(remaining / (1000 * 60)) % 60;
+    const hours = Math.floor(remaining / (1000 * 60 * 60)) % 24;
+    const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+
+    const pad = (value: number) => value.toString().padStart(2, '0');
+    this.countdownText = `${days}d ${pad(hours)}h ${pad(minutes)}m ${pad(seconds)}s`;
+  }
+
+  clearCountdown() {
+    if (this.countdownTimerId !== null) {
+      clearInterval(this.countdownTimerId);
+      this.countdownTimerId = null;
+    }
+    this.showCountdown = false;
+    this.countdownText = '';
+  }
+
+  formatDateTime(value: string | Date): string {
+    const date = value instanceof Date ? value : new Date(value);
+    if (isNaN(date.getTime())) {
+      return typeof value === 'string' ? value : '';
+    }
+    return date.toLocaleString('en-GB', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  }
+
   onTimeUpdate(event: any) {
     this.currentTime = event.target.currentTime;
     this.duration = event.target.duration;
@@ -154,6 +280,10 @@ export class VideoComponent implements OnInit {
 
   onPlayPause(event: any) {
     this.isPlaying = !event.target.paused;
+  }
+
+  ngOnDestroy() {
+    this.clearCountdown();
   }
 
   formatTime(seconds: number): string {

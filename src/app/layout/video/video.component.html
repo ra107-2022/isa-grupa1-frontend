@@ -13,19 +13,28 @@
 
   <div *ngIf="video && !loading && !error" class="player-wrapper">
     <div class="video-section">
-      <video
-        *ngIf="videoUrl"
-        controls
-        controlsList="nodownload"
-        [src]="videoUrl"
-        (error)="onVideoError($event)"
-        (timeupdate)="onTimeUpdate($event)"
-        (play)="onPlayPause($event)"
-        (pause)="onPlayPause($event)"
-        class="video-element"
-      >
-        Your browser does not support the video tag.
-      </video>
+      <div *ngIf="showCountdown; else videoContainer" class="premiere-countdown">
+        <h2>Premiere starts in</h2>
+        <p class="countdown">{{ countdownText }}</p>
+        <p *ngIf="premiereDateString">Premiere date: {{ formatDateTime(premiereDateString) }}</p>
+      </div>
+      <ng-template #videoContainer>
+        <video
+          *ngIf="videoUrl"
+          #videoElement
+          controls
+          controlsList="nodownload"
+          [src]="videoUrl"
+          (error)="onVideoError($event)"
+          (timeupdate)="onTimeUpdate($event)"
+          (play)="onPlayPause($event)"
+          (pause)="onPlayPause($event)"
+          class="video-element"
+          (loadedmetadata)="syncVideo()"
+        >
+          Your browser does not support the video tag.
+        </video>
+      </ng-template>
     </div>
 
     <div class="video-info">
