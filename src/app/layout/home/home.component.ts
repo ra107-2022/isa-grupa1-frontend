@@ -16,6 +16,7 @@ import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
 export class HomeComponent implements OnInit, OnDestroy {
   thumbnailUrl: SafeUrl | undefined;
   videos: VideoCard[] = [];
+  topTrendingVideos: VideoCard[] = [];
 
   showingTrending: boolean = false;
   showChart: boolean = false;
@@ -67,7 +68,40 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadTopTrending() {
+  this.homeService.getLatestTrending().pipe(
+    switchMap(currentTrending => {
+      if (!currentTrending) return of([]);
+
+      const top3 = [currentTrending.video1, currentTrending.video2, currentTrending.video3];
+      
+      const requests = top3.map(video => 
+        forkJoin({
+          info: this.homeService.getVideoInfo(video.id),
+          thumbnail: this.homeService.getThumbnail(video.id)
+        }).pipe(
+          map(res => {
+            const objectURL = URL.createObjectURL(res.thumbnail);
+            return {
+              id: video.id,
+              title: res.info.title,
+              creator: res.info.userUsername,
+              views: res.info.viewCount,
+              duration: res.info.duration,
+              isLive: res.info.isLive,
+              premiereDate: res.info.premiereDate ? new Date(res.info.premiereDate) : undefined,
+              thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
+            } as VideoCard;
+          })
+        )
+      );
+      return forkJoin(requests);
+    })
+  ).subscribe(videos => this.topTrendingVideos = videos);
+}
+
   ngOnInit() {
+    this.loadTopTrending();
     this.loadVideos();
   }
 
