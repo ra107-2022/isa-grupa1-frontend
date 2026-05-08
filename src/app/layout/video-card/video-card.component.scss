@@ -63,3 +63,71 @@
 .views {
   font-weight: 400;
 }
+
+/* Ensure the wrapper can contain absolute children */
+.thumbnail-wrapper {
+  position: relative; /* Added this */
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge {
+  position: absolute;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  z-index: 2;
+}
+
+/* Red Live Badge - Top Left */
+.badge.live {
+  top: 8px;
+  left: 8px;
+  background-color: rgba(255, 0, 0, 0.9);
+  color: #fff;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+/* Black Duration Badge - Bottom Right */
+.badge.duration {
+  bottom: 8px;
+  right: 8px;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+
+/* Optional: Pulse effect for the Live badge to make it pop */
+.badge.live::before {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+  animation: live-pulse 1.5s infinite;
+}
+
+@keyframes live-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
+
+/* Gray Premiere Badge */
+.badge.premiere {
+  top: 8px;
+  left: 8px;
+  background-color: rgba(60, 60, 60, 0.9); /* Dark Gray */
+  color: #eeeeee;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}

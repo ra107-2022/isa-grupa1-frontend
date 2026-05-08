@@ -34,6 +34,7 @@ export class VideoComponent implements OnInit {
   volume: number = 1;
   isMuted: boolean = false;
   isFullscreen: boolean = false;
+  initialOffset: number = 0;
 
   showCountdown: boolean = false;
   countdownText: string = '';
@@ -84,24 +85,31 @@ export class VideoComponent implements OnInit {
   }
 
   loadVideo(id: number) {
-    this.loading = true;
-    this.error = null;
+  this.loading = true;
 
-    this.videoService.getAllVideoInfo(id).subscribe({
-      next: (info) => {
-        this.video = this.normalizePremiereDate(info);
-        this.videoUrl = this.videoService.getVideoUrl(id);
-        this.setupVideoCountdown();
-        this.loading = false;
-        this.checkPremiereStatus();
-      },
-      error: (err) => {
-        console.error('Error loading video: ', err);
-        this.error = 'Failed to load video. Please try again later!';
-        this.loading = false;
+  this.videoService.getAllVideoInfo(id).subscribe({
+    next: (info) => {
+      this.video = this.normalizePremiereDate(info);
+      
+        if (this.video.premiereDate) {
+        this.videoService.getStreamingInfo(id).subscribe(streamInfo => {
+          if (!streamInfo.isAvailable) {
+            this.showCountdown = true;
+            this.setupVideoCountdown();
+          } else {
+            this.showCountdown = false;
+            this.isLive = streamInfo.isLive;
+            
+            this.initialOffset = streamInfo.offset;
+          }
+        });
       }
-    });
-  }
+      this.videoUrl = this.videoService.getVideoUrl(id);
+      this.loading = false;
+    },
+    error: (err) => { /* error handling */ }
+  });
+}
 
   private normalizePremiereDate(info: AllVideoInfo): AllVideoInfo {
     const rawDate = (info as any).premiereDate ?? (info as any).premiere_date;
@@ -171,27 +179,39 @@ export class VideoComponent implements OnInit {
 
     if (timeDiffMs <= 0) {
       this.isLive = true;
-      this.syncVideo();
+      this.syncVideo(false);
     }
   }
 
-  syncVideo(): void {
-    if (!this.video || !this.isLive || !this.videoElement?.nativeElement || !this.video.premiereDate) {
-      return;
-    }
+  syncVideo(initial: Boolean): void {
+    if (!this.videoElement?.nativeElement || this.initialOffset === undefined) return;
 
     const video = this.videoElement.nativeElement;
-    const now = new Date();
-    
-    const offsetSeconds = (now.getTime() - this.video.premiereDate.getTime()) / 1000;
 
-    if (Math.abs(video.currentTime - offsetSeconds) > 1) {
-      video.currentTime = offsetSeconds;
+    if (!initial) {
+      this.videoService.getStreamingInfo(this.videoId).subscribe(streamInfo => {
+        this.initialOffset = streamInfo.offset;
+        if (this.initialOffset === 0) {
+          this.isLive = false;
+        }
+
+        if (this.isLive) {
+          video.currentTime = this.initialOffset;
+          video.play();
+        } 
+        else {
+          video.currentTime = 0; 
+        }
+      });
+    } else {
+      if (this.isLive) {
+        video.currentTime = this.initialOffset;
+        video.play();
+      } 
+      else {
+        video.currentTime = 0; 
+      }
     }
-    
-    video.play().catch(err => {
-      console.log('Autoplay prevented', err);
-    });
   }
 
   formatDate(dateString: string): string {
@@ -292,5 +312,39 @@ export class VideoComponent implements OnInit {
     const secs = Math.floor(seconds % 60);
     return `${minutes}:${secs.toString().padStart(2, '0')}`;
   }
-  
+
+  togglePlay() {
+    const video = this.videoElement.nativeElement;
+    if (video.paused) {
+      video.play();
+    } else {
+      video.pause();
+    }
+  }
+
+  toggleMute() {
+    const video = this.videoElement.nativeElement;
+    this.isMuted = !this.isMuted;
+    video.muted = this.isMuted;
+  }
+
+  toggleFullscreen() {
+    const wrapper = document.querySelector('.video-player-wrapper');
+    if (!document.fullscreenElement) {
+      wrapper?.requestFullscreen();
+    } else {
+      document.exitFullscreen();
+    }
+  }
+
+  isBehind(): boolean {
+    if (!this.video?.premiereDate || !this.videoElement) return false;
+    
+    const now = new Date().getTime();
+    const startTime = this.video.premiereDate.getTime();
+    const expectedOffset = (now - startTime) / 1000;
+    const actualTime = this.videoElement.nativeElement.currentTime;
+
+    return (expectedOffset - actualTime) > 5 && this.isLive;
+  }
 }

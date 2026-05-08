@@ -25,6 +25,13 @@ export type AllVideoInfo = {
     dislikeCount: number;
 }
 
+export interface StreamingInfo {
+  isAvailable: boolean;
+  isLive: boolean;
+  canSeek: boolean;
+  offset: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -98,5 +105,9 @@ export class VideoService {
       console.log("not logged in");
       return this.http.put(`${this.apiUrl}/${id}/view`, {}, { withCredentials: false });
     }
+  }
+
+  getStreamingInfo(id: number): Observable<StreamingInfo> {
+    return this.http.get<StreamingInfo>(`${this.apiUrl}/${id}/streaming_info`);
   }
 }

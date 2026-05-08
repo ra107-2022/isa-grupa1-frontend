@@ -19,22 +19,62 @@
         <p *ngIf="premiereDateString">Premiere date: {{ formatDateTime(premiereDateString) }}</p>
       </div>
       <ng-template #videoContainer>
+      <div class="video-player-wrapper">
+        <!-- Live Badge -->
+        <div *ngIf="isLive" [class.live-badge]="true" [class.is-behind]="isBehind()">
+          <span class="pulse-dot"></span>
+          {{ isBehind() ? 'BEHIND LIVE' : 'LIVE' }}
+        </div>
+
+        <!-- The Video Element -->
+        <!-- We remove 'controls' when live to use our custom overlay -->
         <video
           *ngIf="videoUrl"
           #videoElement
-          controls
+          [controls]="!isLive"
           controlsList="nodownload"
           [src]="videoUrl"
           (error)="onVideoError($event)"
           (timeupdate)="onTimeUpdate($event)"
           (play)="onPlayPause($event)"
           (pause)="onPlayPause($event)"
+          crossorigin="anonymous"
           class="video-element"
-          (loadedmetadata)="syncVideo()"
+          (loadedmetadata)="syncVideo(true)"
+          (ended)="syncVideo(false)"
         >
-          Your browser does not support the video tag.
         </video>
-      </ng-template>
+
+        <!-- Custom Live Controls Overlay -->
+        <div *ngIf="isLive" class="live-controls-overlay">
+          <div class="live-progress-bar">
+            <div class="live-progress-filled" [style.width.%]="(currentTime / duration) * 100"></div>
+          </div>
+          
+          <div class="controls-row">
+            <div class="left-controls">
+              <button (click)="togglePlay()">
+                <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+              </button>
+              <button (click)="syncVideo(false)" class="sync-btn">
+                <mat-icon>sync</mat-icon>
+                Sync to Live
+              </button>
+              <span class="live-timer">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
+            </div>
+
+            <div class="right-controls">
+              <button (click)="toggleMute()">
+                <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
+              </button>
+              <button (click)="toggleFullscreen()">
+                <mat-icon>fullscreen</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
     </div>
 
     <div class="video-info">
