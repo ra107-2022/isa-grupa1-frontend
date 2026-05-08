@@ -25,9 +25,12 @@ export class VideoUploadComponent {
   videoPreview: string | null = null;
   thumbnailPreview: string | null = null;
 
+  premiereChecked: boolean = false;
+
   uploadForm = {
     title: '',
     description: '',
+    premiereDateTime: '',
     latitude: null as number | null,
     longitude: null as number | null,
     tags: ''
@@ -105,6 +108,11 @@ export class VideoUploadComponent {
       return;
     }
 
+    if (this.premiereChecked && !this.uploadForm.premiereDateTime) {
+      this.uploadError = 'Please select a premiere date and time';
+      return;
+    }
+
     const tagsArray = this.uploadForm.tags
       .split(',')
       .map(tag => tag.trim())
@@ -129,6 +137,7 @@ export class VideoUploadComponent {
       tagsArray,
       this.uploadForm.latitude ?? undefined,
       this.uploadForm.longitude ?? undefined,
+      this.premiereChecked ? this.uploadForm.premiereDateTime : undefined
     )
     .pipe(finalize(() => this.uploading = false ))
     .subscribe({
@@ -154,9 +163,11 @@ export class VideoUploadComponent {
   }
 
   resetForm() {
+    this.premiereChecked = false;
     this.uploadForm = {
       title: '',
       description: '',
+      premiereDateTime: '',
       latitude: null,
       longitude: null,
       tags: ''
@@ -174,6 +185,12 @@ export class VideoUploadComponent {
     this.uploadProgress = 0;
     this.uploadSuccess = false;
     this.uploadError = null;
+  }
+
+  onPremiereToggle() {
+    if (!this.premiereChecked) {
+      this.uploadForm.premiereDateTime = '';
+    }
   }
 
   cancelUpload() { this.resetForm(); }

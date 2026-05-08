@@ -1,7 +1,19 @@
 <div class="video-card">
   <div class="thumbnail-wrapper">
     <img [src]="thumbnailUrl" alt="Video thumbnail" class="thumbnail" />
+    
+    <!-- 1. LIVE Badge (Red) -->
+    <div *ngIf="isLive" class="badge live">LIVE</div>
+    
+    <!-- 2. PREMIERE Badge (Gray) - Only if not live and date is in future -->
+    <div *ngIf="isUpcomingPremiere()" class="badge premiere">PREMIERE</div>
+    
+    <!-- Duration Badge (only show if NOT live and duration exists) -->
+    <div *ngIf="duration" class="badge duration">
+      {{ formatDuration(duration) }}
+    </div>
   </div>
+
   <div class="video-info">
     <div class="title" title="{{ title }}">{{ title }}</div>
     <div class="meta">

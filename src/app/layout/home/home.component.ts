@@ -48,6 +48,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                 title: res.info.title,
                 creator: res.info.userUsername,
                 views: res.info.viewCount,
+                duration: res.info.duration,
+                isLive: res.info.isLive,
+                premiereDate: res.info.premiereDate ? new Date(res.info.premiereDate) : undefined,
                 thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
               } as VideoCard;
             })
@@ -87,6 +90,9 @@ export class HomeComponent implements OnInit, OnDestroy {
                 title: res.info.title,
                 creator: res.info.userUsername,
                 views: res.info.viewCount,
+                duration: res.info.duration,
+                isLive: res.info.isLive,
+                premiereDate: res.info.premiereDate ? new Date(res.info.premiereDate) : undefined,
                 thumbnailSafeUrl: this.sanitizer.bypassSecurityTrustUrl(objectURL)
               } as VideoCard;
             })

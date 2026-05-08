@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-
+import { environment } from 'src/env/environment';
 import { HttpClient, HttpEventType } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,17 +18,25 @@ export type AllVideoInfo = {
     description: string;
     tags: string[];
     publishDate: string;
+    premiereDate?: Date;
 
     viewCount: number;
     likeCount: number;
     dislikeCount: number;
 }
 
+export interface StreamingInfo {
+  isAvailable: boolean;
+  isLive: boolean;
+  canSeek: boolean;
+  offset: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class VideoService {
-  private apiUrl = 'http://localhost:8080/api/videos';
+  private apiUrl = environment.apiHost + 'videos';
 
   constructor(
     private http: HttpClient
@@ -42,7 +50,8 @@ export class VideoService {
     description: string,
     tags: string[],
     latitude?: number,
-    longitude?: number
+    longitude?: number,
+    premiereDateTime?: string
   ) {
     const formData = new FormData();
     formData.append('video', videoFile);
@@ -55,6 +64,9 @@ export class VideoService {
     }
     if (longitude !== null && longitude !== undefined) {
       formData.append('longitude', longitude.toString());
+    }
+    if (premiereDateTime) {
+      formData.append('premiere_date', premiereDateTime);
     }
 
     return this.http.post(`${this.apiUrl}/upload`, formData, {
@@ -93,5 +105,9 @@ export class VideoService {
       console.log("not logged in");
       return this.http.put(`${this.apiUrl}/${id}/view`, {}, { withCredentials: false });
     }
+  }
+
+  getStreamingInfo(id: number): Observable<StreamingInfo> {
+    return this.http.get<StreamingInfo>(`${this.apiUrl}/${id}/streaming_info`);
   }
 }
