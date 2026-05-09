@@ -57,6 +57,13 @@
         </div>
     <button color="primary" type="submit" mat-raised-button>Register</button>
     </div>
+
+    <div *ngIf="successMessage" class="response-box success-box">
+        {{ successMessage }}
+    </div>
+    <div *ngIf="errorMessage" class="response-box error-box">
+        {{ errorMessage }}
+    </div>
 </form>
 
 

@@ -34,15 +34,11 @@ export class AuthService {
         }));
     }
 
-    register(registration: Registration): Observable<AuthResponse> {
-        return this.http
-            .post<AuthResponse>(environment.apiHost + 'auth/signup', registration)
-            .pipe(
-                tap((authResponse) => {
-                    this.tokenStorage.saveToken(authResponse.token);
-                    this.setUser();
-            })
-        );
+    register(registration: Registration): Observable<string> {
+        return this.http.post(environment.apiHost + 'auth/signup', 
+                registration,
+                { responseType: 'text' }
+            );
     }
 
     logout(): void {
@@ -81,4 +77,15 @@ export class AuthService {
         return !jwtHelperService.isTokenExpired(token);
     }
 
+    verifyEmail(token: string): Observable<string> {
+        return this.http.get<string>(`${environment.apiHost}auth/verify?token=${token}`, 
+            { responseType: 'text' as 'json' });
+    }
+
+    resendVerificationEmail(email: string): Observable<string> {
+        return this.http.post(`${environment.apiHost}auth/resend-verification?email=${email}`, 
+            null,
+            { responseType: 'text' }
+        );
+    }
 }
