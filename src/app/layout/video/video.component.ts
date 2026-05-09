@@ -35,6 +35,7 @@ export class VideoComponent implements OnInit {
   isMuted: boolean = false;
   isFullscreen: boolean = false;
   initialOffset: number = 0;
+  isAvailable: boolean = true;
 
   showCountdown: boolean = false;
   countdownText: string = '';
@@ -70,46 +71,51 @@ export class VideoComponent implements OnInit {
         this.currentUserId = user?.id ?? 0;
     });
     this.authService.checkIfUserExists();
-
-    this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
-      next: info => { 
-        console.log(info);
-        this.geolocService.getCurrentLocation().subscribe(pos => {
-          this.activityService.logActivity(this.videoId, ActivityType.VIEW, pos.longitude, pos.latitude);
-        });
-      },
-      error: err => { console.error('Error happened: ', err); }
-    });
-
+    
     this.loadVideo(this.videoId);
   }
 
   loadVideo(id: number) {
-  this.loading = true;
+    this.loading = true;
 
-  this.videoService.getAllVideoInfo(id).subscribe({
-    next: (info) => {
-      this.video = this.normalizePremiereDate(info);
-      
-        if (this.video.premiereDate) {
-        this.videoService.getStreamingInfo(id).subscribe(streamInfo => {
-          if (!streamInfo.isAvailable) {
-            this.showCountdown = true;
-            this.setupVideoCountdown();
-          } else {
-            this.showCountdown = false;
-            this.isLive = streamInfo.isLive;
-            
-            this.initialOffset = streamInfo.offset;
-          }
-        });
-      }
-      this.videoUrl = this.videoService.getVideoUrl(id);
-      this.loading = false;
-    },
-    error: (err) => { /* error handling */ }
-  });
-}
+    this.videoService.getAllVideoInfo(id).subscribe({
+      next: (info) => {
+        this.video = this.normalizePremiereDate(info);
+        
+          if (this.video.premiereDate) {
+          this.videoService.getStreamingInfo(id).subscribe({
+            next: (streamInfo) => {
+              if (!streamInfo.isAvailable) {
+                this.showCountdown = true;
+                this.isAvailable = false;
+                this.setupVideoCountdown();
+              } else {
+                this.showCountdown = false;
+                this.isLive = streamInfo.isLive;
+                this.isAvailable = true;
+                this.initialOffset = streamInfo.offset;
+              }
+              
+              if (this.isAvailable) {
+                this.videoService.addView(this.videoId, this.user !== undefined && this.user.id !== 0).subscribe({
+                  next: info => { 
+                    console.log(info);
+                    this.geolocService.getCurrentLocation().subscribe(pos => {
+                      this.activityService.logActivity(this.videoId, ActivityType.VIEW, pos.longitude, pos.latitude);
+                    });
+                  },
+                  error: err => { console.error('Error happened: ', err); }
+                });
+              }
+          }});
+        }
+
+        this.videoUrl = this.videoService.getVideoUrl(id);
+        this.loading = false;
+      },
+      error: (err) => { /* error handling */ }
+    });
+  }
 
   private normalizePremiereDate(info: AllVideoInfo): AllVideoInfo {
     const rawDate = (info as any).premiereDate ?? (info as any).premiere_date;

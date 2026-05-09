@@ -106,7 +106,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   loadVideos(): void {
-    this.homeService.getPagedVideos(0, 10).pipe(
+    this.homeService.getPagedVideos(0, 20).pipe(
       switchMap(videoIds => {
         if (!videoIds || videoIds.length === 0) {
           return of([]);
