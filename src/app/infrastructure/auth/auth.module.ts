@@ -7,6 +7,8 @@ import { RegistrationComponent } from './registration/registration.component';
 import { UserProfileComponent } from './user-profile/user-profile.component';
 import { CommentComponent } from './comment/comment.component';
 import { Router, RouterModule } from '@angular/router';
+import { VerificationComponent } from './verification/verification.component';
+import { ResendVerificationComponent } from './resend-verification/resend-verification.component';
 
 
 
@@ -15,7 +17,9 @@ import { Router, RouterModule } from '@angular/router';
     LoginComponent,
     RegistrationComponent,
     UserProfileComponent,
-    CommentComponent
+    CommentComponent,
+    VerificationComponent,
+    ResendVerificationComponent
   ],
   imports: [
     CommonModule,

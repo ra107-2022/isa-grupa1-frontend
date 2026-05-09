@@ -1,0 +1,36 @@
+<div class="resend-container">
+  <h2>Resend Verification Email</h2>
+  <p>Enter your email address to receive a new verification link.</p>
+
+  <form (ngSubmit)="onSubmit()" #resendForm="ngForm">
+    <div class="form-group">
+      <label for="email">Email Address</label>
+      <input 
+        type="email" 
+        id="email" 
+        name="email" 
+        [(ngModel)]="email" 
+        required 
+        placeholder="your.email@example.com"
+        [disabled]="isLoading">
+    </div>
+
+    <button type="submit" [disabled]="isLoading || resendForm.invalid">
+      {{ isLoading ? 'Sending...' : 'Send Verification Email' }}
+    </button>
+  </form>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="alert alert-success mt-3">
+    {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+    {{ errorMessage }}
+  </div>
+
+  <div class="actions mt-3">
+    <button type="button" class="btn-link" (click)="goToLogin()">Back to Login</button>
+  </div>
+</div>

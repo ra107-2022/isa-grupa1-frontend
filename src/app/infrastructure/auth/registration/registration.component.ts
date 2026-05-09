@@ -10,8 +10,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./registration.component.css']
 })
 export class RegistrationComponent {
-  emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-
+  emailPattern = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";  successMessage = '';
+  errorMessage = '';
   constructor(
     private authService: AuthService,
     private router: Router
@@ -42,10 +42,19 @@ export class RegistrationComponent {
     };
 
     if (this.registrationForm.valid) {
+      this.successMessage = '';
+      this.errorMessage = '';
+
       this.authService.register(signup).subscribe({
-        next: () => {
-          this.router.navigate(['home']);
+        next: (message: string) => {
+          this.successMessage = message;
+          this.registrationForm.reset();
+          this.registrationForm.markAsPristine();
+          this.registrationForm.markAsUntouched();
         },
+        error: (err) => {
+          this.errorMessage = err.error || 'An error occurred while registering.';
+        }
       });
     }
   }

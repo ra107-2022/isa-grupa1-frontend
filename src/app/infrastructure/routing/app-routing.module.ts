@@ -7,6 +7,8 @@ import { RegistrationComponent } from '../auth/registration/registration.compone
 import { VideoUploadComponent } from '../../layout/video-upload/video-upload.component';
 import { UserProfileComponent } from '../auth/user-profile/user-profile.component';
 import { VideoComponent } from '../../layout/video/video.component';
+import { VerificationComponent } from '../auth/verification/verification.component';
+import { ResendVerificationComponent } from '../auth/resend-verification/resend-verification.component';
 
 const routes: Routes = [
   // Default
@@ -20,6 +22,8 @@ const routes: Routes = [
   { path: 'users/:id', component: UserProfileComponent },
   { path: 'video/:id', component: VideoComponent },
   { path: 'users/me', component: UserProfileComponent },
+  { path: 'verify', component: VerificationComponent },
+  { path: 'resend-verification', component: ResendVerificationComponent },
 
   //{ path: 'profile/me', component: UserProfileComponent, canActivate: [AuthGuard] }, // Moj profil
 

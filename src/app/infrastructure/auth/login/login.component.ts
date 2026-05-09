@@ -38,7 +38,7 @@ constructor(
       },
       error: (e) => {
         console.error(e);
-        alert("Login failed");
+        alert(e.error || 'An error occurred during login. Please try again.');
       }
     });
   }
