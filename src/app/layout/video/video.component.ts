@@ -10,6 +10,7 @@ import { ActivityService } from '../activity.service';
 import { CommentDto } from 'src/app/infrastructure/auth/model/comment.model';
 import { CommentService } from 'src/app/infrastructure/auth/service/comment.service';
 import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
+import { WatchpartyService } from 'src/app/services/watchparty-service/watchparty.service';
 
 
 @Component({
@@ -51,7 +52,9 @@ export class VideoComponent implements OnInit {
     private sanitizer: DomSanitizer,
     private authService: AuthService,
     private activityService: ActivityService,
-    private geolocService: GeolocService
+    private geolocService: GeolocService,
+    private watchpartyService: WatchpartyService
+  
     
   ) {}
 
@@ -112,6 +115,20 @@ export class VideoComponent implements OnInit {
 
         this.videoUrl = this.videoService.getVideoUrl(id);
         this.loading = false;
+
+        if(this.watchpartyService.roomCode) {
+          setTimeout(() => {
+            const video = this.videoElement.nativeElement;
+            if(video) {
+              video.muted = true;
+              video.play().then(() => {
+                video.muted = false;
+              }).catch(err => {
+                console.error('Error auto-playing video in watch party:', err);
+              });
+            }
+          }, 500);
+        }
       },
       error: (err) => { /* error handling */ }
     });

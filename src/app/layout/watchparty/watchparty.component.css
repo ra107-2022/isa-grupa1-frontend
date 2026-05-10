@@ -1,0 +1,9 @@
+.snack-success {
+  background-color: #2e7d32;
+  color: white;
+}
+
+.snack-error {
+  background-color: #c62828;
+  color: white;
+}

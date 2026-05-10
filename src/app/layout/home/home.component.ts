@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
 import { HomeService } from '../home.service';
@@ -7,6 +7,8 @@ import { ActivityService } from '../activity.service';
 import { forkJoin, map, of, switchMap } from 'rxjs';
 import { AuthService } from 'src/app/infrastructure/auth/auth.service';
 import { GeolocService } from 'src/app/services/geoloc-service/geoloc.service';
+import { WatchpartyComponent } from '../watchparty/watchparty.component';
+
 
 @Component({
   selector: 'app-home',
@@ -20,6 +22,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   showingTrending: boolean = false;
   showChart: boolean = false;
+
+  @ViewChild(WatchpartyComponent)
+  watchpartyComponent!: WatchpartyComponent;
 
   constructor(
     private homeService: HomeService,
@@ -171,6 +176,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.showChart = false;
       this.loadVideos();
+    }
+  }
+
+  playInWatchParty(video: VideoCard) {
+    if (this.watchpartyComponent?.roomCode) {
+      this.watchpartyComponent.playVideo(video.id); // broadcast + navigacija
+    } else {
+      this.gotoVideo(video.id); // normalno
     }
   }
 

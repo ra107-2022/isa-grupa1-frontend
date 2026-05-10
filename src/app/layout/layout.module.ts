@@ -17,6 +17,8 @@ import { VideoComponent } from './video/video.component';
 import { FormsModule } from '@angular/forms';
 import { CommentSectionComponent } from './comment-section/comment-section.component';
 import { PerformanceGraphComponent } from './performance-graph/performance-graph.component';
+import { WatchpartyComponent } from './watchparty/watchparty.component';
+import { EnterWatchpartyComponent } from './enter-watchparty/enter-watchparty.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { PerformanceGraphComponent } from './performance-graph/performance-graph
     RatingsComponent,
     VideoComponent,
     CommentSectionComponent,
-    PerformanceGraphComponent
+    PerformanceGraphComponent,
+    WatchpartyComponent,
+    EnterWatchpartyComponent,
   ],
   imports: [
     CommonModule,

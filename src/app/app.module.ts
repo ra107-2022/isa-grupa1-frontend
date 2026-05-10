@@ -12,10 +12,12 @@ import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
+import { EnterWatchpartyComponent } from './enter-watchparty/enter-watchparty.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    EnterWatchpartyComponent
   ],
   imports: [
     BrowserModule,
@@ -25,8 +27,7 @@ import { CommonModule } from '@angular/common';
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
-    MatIconModule,
-    CommonModule
+    MatIconModule
   ],
   providers: [
     {
