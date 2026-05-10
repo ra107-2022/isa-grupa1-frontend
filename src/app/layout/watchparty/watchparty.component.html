@@ -1,0 +1,68 @@
+<div class="watchparty-container">
+
+  <!-- HEADER ACTIONS -->
+  <div class="actions">
+    <button
+      *ngIf="!roomCode"
+      mat-raised-button
+      color="primary"
+      (click)="createRoom()"
+    >
+      Create room
+    </button>
+
+    <button
+      *ngIf="!roomCode"
+      mat-raised-button
+      color="accent"
+      (click)="showJoinInput = !showJoinInput"
+    >
+      Enter room
+    </button>
+  </div>
+
+  <!-- JOIN INPUT -->
+  <div class="card" *ngIf="showJoinInput && !roomCode">
+    <h3>Join Watch Party</h3>
+    <div class="join-row">
+      <input
+        type="text"
+        [(ngModel)]="joinCode"
+        placeholder="Enter room code"
+      />
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="enterRoom()"
+      >
+        Join
+      </button>
+    </div>
+  </div>
+
+  <!-- ROOM INFO - HOST -->
+  <div class="card" *ngIf="roomCode && isHost">
+    <div class="room-header">
+      <h3>Room: <span>{{ roomCode }}</span></h3>
+      <div class="participants">
+        👥 {{ usersCount }} users
+      </div>
+    </div>
+    <button mat-raised-button color="warn" (click)="leaveOrCloseRoom()">
+      Close room
+    </button>
+  </div>
+
+  <!-- ROOM INFO - GUEST -->
+  <div class="card" *ngIf="roomCode && !isHost">
+    <div class="room-header">
+      <h3>Room: <span>{{ roomCode }}</span></h3>
+    </div>
+    <button mat-raised-button color="accent" (click)="leaveOrCloseRoom()">
+      Leave room
+    </button>
+  </div>
+
+  
+
+</div>
