@@ -12,83 +12,105 @@
   </div>
 
   <div *ngIf="video && !loading && !error" class="player-wrapper">
-    <div class="video-section">
-      <div *ngIf="showCountdown; else videoContainer" class="premiere-countdown">
-        <h2>Premiere starts in</h2>
-        <p class="countdown">{{ countdownText }}</p>
-        <p *ngIf="premiereDateString">Premiere date: {{ formatDateTime(premiereDateString) }}</p>
-      </div>
-      <ng-template #videoContainer>
-      <div class="video-player-wrapper">
-        <!-- Live Badge -->
-        <div *ngIf="isLive" [class.live-badge]="true" [class.is-behind]="isBehind()">
-          <span class="pulse-dot"></span>
-          {{ isBehind() ? 'BEHIND LIVE' : 'LIVE' }}
+    <div class="top-row">
+      <div class="video-section">
+        <div *ngIf="showCountdown; else videoContainer" class="premiere-countdown">
+          <h2>Premiere starts in</h2>
+          <p class="countdown">{{ countdownText }}</p>
+          <p *ngIf="premiereDateString">Premiere date: {{ formatDateTime(premiereDateString) }}</p>
         </div>
-
-        <!-- The Video Element -->
-        <!-- We remove 'controls' when live to use our custom overlay -->
-        <video
-          *ngIf="videoUrl"
-          #videoElement
-          [controls]="!isLive"
-          controlsList="nodownload"
-          [src]="videoUrl"
-          (error)="onVideoError($event)"
-          (timeupdate)="onTimeUpdate($event)"
-          (play)="onPlayPause($event)"
-          (pause)="onPlayPause($event)"
-          crossorigin="anonymous"
-          class="video-element"
-          (loadedmetadata)="syncVideo(true)"
-          (ended)="syncVideo(false)"
-        >
-        </video>
-
-        <!-- Custom Live Controls Overlay -->
-        <div *ngIf="isLive" class="live-controls-overlay">
-          <div class="live-progress-bar">
-            <div class="live-progress-filled" [style.width.%]="(currentTime / duration) * 100"></div>
-          </div>
-          
-          <div class="controls-row">
-            <div class="left-controls">
-              <button (click)="togglePlay()">
-                <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
-              </button>
-              <button (click)="syncVideo(false)" class="sync-btn">
-                <mat-icon>sync</mat-icon>
-                Sync to Live
-              </button>
-              <span class="live-timer">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
+        <ng-template #videoContainer>
+          <div class="video-player-wrapper">
+            <div *ngIf="isLive" [class.live-badge]="true" [class.is-behind]="isBehind()">
+              <span class="pulse-dot"></span>
+              {{ isBehind() ? 'BEHIND LIVE' : 'LIVE' }}
             </div>
 
-            <div class="right-controls">
-              <button (click)="toggleMute()">
-                <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
-              </button>
-              <button (click)="toggleFullscreen()">
-                <mat-icon>fullscreen</mat-icon>
-              </button>
+            <video
+              *ngIf="videoUrl"
+              #videoElement
+              [controls]="!isLive"
+              controlsList="nodownload"
+              [src]="videoUrl"
+              (error)="onVideoError($event)"
+              (timeupdate)="onTimeUpdate($event)"
+              (play)="onPlayPause($event)"
+              (pause)="onPlayPause($event)"
+              crossorigin="anonymous"
+              class="video-element"
+              (loadedmetadata)="syncVideo(true)"
+              (ended)="syncVideo(false)"
+            ></video>
+
+            <div *ngIf="isLive" class="live-controls-overlay">
+              <div class="live-progress-bar">
+                <div class="live-progress-filled" [style.width.%]="(currentTime / duration) * 100"></div>
+              </div>
+              <div class="controls-row">
+                <div class="left-controls">
+                  <button (click)="togglePlay()">
+                    <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+                  </button>
+                  <button (click)="syncVideo(false)" class="sync-btn">
+                    <mat-icon>sync</mat-icon>
+                    Sync to Live
+                  </button>
+                  <span class="live-timer">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
+                </div>
+                <div class="right-controls">
+                  <button (click)="toggleMute()">
+                    <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
+                  </button>
+                  <button (click)="toggleFullscreen()">
+                    <mat-icon>fullscreen</mat-icon>
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+        </ng-template>
+      </div>
+
+      <div *ngIf="isPremiere" class="chat-container" [class.collapsed]="!showChat">
+        <div class="chat-header">
+          <h3>Chat</h3>
+          <button class="chat-toggle-btn" (click)="toggleChat()">
+            {{ showChat ? '›' : '‹' }}
+          </button>
+        </div>
+        <div class="chat-messages">
+          <div *ngFor="let msg of messages" class="chat-message">
+            <span class="chat-username">{{ msg.username }}</span>
+            <span class="chat-content">{{ msg.content }}</span>
+            <span class="chat-time">{{ msg.timestamp | date:'HH:mm:ss' }}</span>
+          </div>
+        </div>
+        <div *ngIf="isAuthenticated && isLive" class="chat-input">
+          <input
+            [(ngModel)]="newMessage"
+            placeholder="Type a message..."
+            (keydown.enter)="sendChatMessage()"
+          />
+          <button (click)="sendChatMessage()">Send</button>
+        </div>
+        <div *ngIf="!isAuthenticated" class="chat-login-prompt">
+          <p>Log in to chat.</p>
+        </div>
+        <div *ngIf="isAuthenticated && !isLive" class="chat-login-prompt">
+          <p>Premiere has ended.</p>
         </div>
       </div>
-    </ng-template>
     </div>
 
     <div class="video-info">
       <h1 class="video-title">{{ video.title }}</h1>
-
       <div class="video-meta">
         <mat-icon>today</mat-icon>
         {{ formatDate(video.publishDate) }}
-
         <span style="width: 20px"></span>
         <mat-icon>visibility</mat-icon>
         {{ video.viewCount }} views
       </div>
-
       <div class="video-actions">
         <app-video-rating [videoId]="videoId"></app-video-rating>
         <button class="action-btn">
@@ -100,19 +122,16 @@
           Share
         </button>
       </div>
-
       <div class="video-description">
         <h3>Description</h3>
         <p>{{ video.description }}</p>
       </div>
-
       <div class="video-tags" *ngIf="video.tags && video.tags.length > 0">
         <h3>Tags</h3>
         <div class="tags-list">
           <span *ngFor="let tag of video.tags" class="tag">#{{ tag }}</span>
         </div>
       </div>
-
       <div class="uploader-info">
         <div class="uploader-avatar">
           {{ video.ownerUsername ? video.ownerUsername.charAt(0).toUpperCase() : 'U' }}
@@ -125,13 +144,11 @@
         </div>
       </div>
     </div>
+
+    <app-comment-section
+      [videoId]="videoId"
+      [currentUserId]="currentUserId"
+      [isAuthenticated]="isAuthenticated">
+    </app-comment-section>
   </div>
-
-  <app-comment-section
-    [videoId]="videoId"
-    [currentUserId]="currentUserId"
-    [isAuthenticated]="isAuthenticated">
-  </app-comment-section>
-
-
 </div>
