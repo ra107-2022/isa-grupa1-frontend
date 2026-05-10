@@ -30,7 +30,7 @@ $my-theme: mat.define-dark-theme((
   --color-bg-card: #1e1e1e;      /* Card surfaces */
 
   --color-primary: #ff0000;      /* YT Red */
-  --color-primary-dark: #cc0000; 
+  --color-primary-dark: #cc0000;
   --color-primary-soft: #272727; /* Dark mode buttons are often grey */
   --color-accent: #3ea6ff;       /* YT Blue for links/verification */
 
@@ -68,7 +68,6 @@ $my-theme: mat.define-dark-theme((
 }
 
 /* 2. Global reset */
-
 body {
   margin: 0;
   font-family: var(--font-family-base);
